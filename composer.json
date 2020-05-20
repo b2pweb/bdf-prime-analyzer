@@ -1,0 +1,34 @@
+{
+    "name": "b2p/bdf-prime-analyzer",
+    "type": "project",
+    "config": {
+        "secure-http": false
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "http://packagist.b2pweb.com"
+        }
+    ],
+
+    "autoload": {
+        "psr-4": {
+            "Bdf\\Prime\\Analyzer\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "AnalyzerTest\\": "tests/_files"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.1",
+        "b2p/bdf-prime": "~1.6",
+        "b2p/bdf-web": "~1.6",
+        "b2pweb/bdf-collections": "~1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
+    }
+}
