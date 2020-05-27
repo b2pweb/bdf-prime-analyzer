@@ -3,6 +3,8 @@
 namespace Bdf\Prime\Analyzer\Testing;
 
 use Bdf\Prime\Analyzer\Report;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\ConsoleDumpFormat;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\DumpFormatInterface;
 
 /**
  * Dump the analyzer reports on the stdout
@@ -26,6 +28,20 @@ class AnalyzerReportDumper
      */
     private $reports = [];
 
+    /**
+     * @var DumpFormatInterface[]
+     */
+    private $formats;
+
+    /**
+     * AnalyzerReportDumper constructor.
+     *
+     * @param DumpFormatInterface[] $formats
+     */
+    public function __construct(?array $formats = null)
+    {
+        $this->formats = $formats ?? [new ConsoleDumpFormat()];
+    }
 
     /**
      * Register the dumper at the shutdown
@@ -50,26 +66,8 @@ class AnalyzerReportDumper
      */
     public function dump(): void
     {
-        if (empty($this->reports)) {
-            $this->stdout("No prime reports");
-            return;
-        }
-
-        $count = count($this->reports);
-        $this->stdout("Prime reports ({$count}):", 'warn');
-
-        foreach ($this->reports as $report) {
-            echo PHP_EOL, $report->file(), ':', $report->line();
-
-            if ($report->entity()) {
-                echo ' on ', $report->entity();
-            }
-
-            echo ' (called ', $report->calls(), ' times)', PHP_EOL;
-
-            foreach ($report->errors() as $error) {
-                echo "\t", $error, PHP_EOL;
-            }
+        foreach ($this->formats as $format) {
+            $format->dump($this->reports);
         }
     }
 
@@ -106,6 +104,16 @@ class AnalyzerReportDumper
     }
 
     /**
+     * Register a new dump format
+     *
+     * @param DumpFormatInterface $format
+     */
+    public function addFormat(DumpFormatInterface $format): void
+    {
+        $this->formats[] = $format;
+    }
+
+    /**
      * Get the report dumper instance
      * Note: The instance must be register()ed manually
      *
@@ -118,26 +126,5 @@ class AnalyzerReportDumper
         }
 
         return self::$instance = new static();
-    }
-
-    /**
-     * Print on stdout
-     *
-     * @param string $message
-     * @param string $level
-     */
-    private function stdout($message, $level = 'info')
-    {
-        if ($level === 'info') {
-            $level = '42';
-        } else {
-            $level = '43';
-        }
-
-        if (function_exists('posix_isatty') && @posix_isatty(STDOUT)) {
-            echo "\n\x1B[{$level};30m{$message}\x1B[0m\n";
-        } else {
-            echo "\n{$message}\n";
-        }
     }
 }

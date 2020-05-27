@@ -40,8 +40,10 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      */
     final public function analyze(Report $report, CompilableClause $query): void
     {
-        // @todo handle entity not found
-        $repository = $this->serviceLocator->repository($report->entity());
+        if (!$report->entity() || (!$repository = $this->serviceLocator->repository($report->entity()))) {
+            return;
+        }
+
         $parameters = method_exists($repository->mapper(), 'primeAnalyzerParameters')
             ? $repository->mapper()->primeAnalyzerParameters()
             : []
@@ -70,9 +72,9 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      *
      * @param string $tableName The table name
      *
-     * @return RepositoryInterface
+     * @return RepositoryInterface|null
      */
-    final protected function repositoryByTableName(string $tableName): RepositoryInterface
+    final protected function repositoryByTableName(string $tableName): ?RepositoryInterface
     {
         foreach ($this->serviceLocator->repositoryNames() as $name) {
             $repository = $this->serviceLocator->repository($name);
@@ -82,6 +84,6 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
             }
         }
 
-        throw new \LogicException('Cannot found the repository');
+        return null;
     }
 }

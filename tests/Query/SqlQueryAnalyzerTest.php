@@ -34,6 +34,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $this->analyzer = new SqlQueryAnalyzer($this->prime);
         $this->service = new AnalyzerService([Query::class => $this->analyzer]);
         $this->service->configure($this->prime->connection('test'));
+        $this->service->addIgnoredAnalysis('optimisation');
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();
     }
 
@@ -48,7 +49,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(45, $report->line());
+        $this->assertEquals(46, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());
@@ -160,5 +161,16 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $report->errors());
         TestEntity::repository()->mapper()->primeAnalyzerParameters = [];
+    }
+
+    /**
+     *
+     */
+    public function test_query_without_repository()
+    {
+        $this->prime->connection('test')->from('test_entity')->all();
+
+        $report = $this->service->reports()[0];
+        $this->assertEmpty($report->errors());
     }
 }

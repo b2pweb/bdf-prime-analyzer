@@ -18,15 +18,43 @@ use Bdf\Web\Providers\ServiceProviderInterface;
 class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
     /**
+     * @var array
+     */
+    private $parameters;
+
+    /**
+     * PrimeAnalyzerServiceProvider constructor.
+     *
+     * @param array $parameters
+     */
+    public function __construct(array $parameters = [])
+    {
+        $this->parameters = $parameters + [
+            'ignoredPath' => [],
+            'ignoredAnalysis' => [],
+            'dumpFormats' => null,
+            'register' => true,
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function configure(Application $app)
     {
         $app->set(AnalyzerService::class, function (Application $app) {
-            return new AnalyzerService([
+            return new AnalyzerService(
+                $app->get(AnalyzerInterface::class.'[]'),
+                (array) $this->parameters['ignoredPath'],
+                (array) $this->parameters['ignoredAnalysis']
+            );
+        });
+
+        $app->set(AnalyzerInterface::class.'[]', function (Application $app) {
+            return [
                 Query::class => $app->get(SqlQueryAnalyzer::class),
                 KeyValueQuery::class => $app->get(KeyValueQueryAnalyzer::class),
-            ]);
+            ];
         });
 
         $app->set(SqlQueryAnalyzer::class, function (Application $app) {
@@ -38,7 +66,7 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
         });
 
         $app->set(AnalyzerReportDumper::class, function () {
-            return new AnalyzerReportDumper();
+            return new AnalyzerReportDumper($this->parameters['dumpFormats']);
         });
     }
 
@@ -60,5 +88,9 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
             $app->get(AnalyzerReportDumper::class)->push($app->get(AnalyzerService::class)->reports());
             $app->get(AnalyzerService::class)->reset();
         });
+
+        if ($this->parameters['register'] === true) {
+            $app->get(AnalyzerReportDumper::class)->register();
+        }
     }
 }

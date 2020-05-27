@@ -24,6 +24,7 @@ final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
         parent::__construct($serviceLocator, $analyzers ?? [
             new OrNotNestedAnalyzer(), new MissingIndexAnalyzer(), new NotDeclaredAttributesAnalyzer(),
             new NotIndexedSortAnalyzer(), new RelationDistantKeyAnalyzer(), new LikeWithoutWildcardAnalyzer(),
+            new QueryOptimisationAnalyser(),
         ]);
     }
 
@@ -32,6 +33,6 @@ final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      */
     public function entity(CompilableClause $query): ?string
     {
-        return $this->repositoryByTableName($query->statements['tables'][0]['table'])->entityClass();
+        return ($repository = $this->repositoryByTableName($query->statements['tables'][0]['table'])) ? $repository->entityClass() : null;
     }
 }
