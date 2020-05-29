@@ -35,6 +35,7 @@ class NotDeclaredAttributesAnalyzerTest extends AnalyzerTestCase
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()));
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where('id', 1)));
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where(function (QueryInterface $query) { $query->where('key', 'response')->orWhere('value', 42); })));
+        $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where('relationEntity.label', 'My label')));
     }
 
     /**
@@ -44,6 +45,7 @@ class NotDeclaredAttributesAnalyzerTest extends AnalyzerTestCase
     {
         $this->assertEquals(['Use of undeclared attribute "_id".'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where('_id', 1)));
         $this->assertEquals(['Use of undeclared attribute "_key".', 'Use of undeclared attribute "_value".'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where(function (QueryInterface $query) { $query->where('_key', 'response')->orWhere('_value', 42); })));
+        $this->assertEquals(['Use of undeclared attribute "relationEntity.not_found".'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::builder()->where('relationEntity.not_found')));
     }
 
     /**

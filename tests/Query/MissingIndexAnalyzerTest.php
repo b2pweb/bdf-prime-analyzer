@@ -40,6 +40,7 @@ class MissingIndexAnalyzerTest extends AnalyzerTestCase
     public function test_query_without_index()
     {
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::where('value', 42)));
+        $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::where('relationEntity.label', 'label')));
     }
 
     /**
@@ -48,6 +49,7 @@ class MissingIndexAnalyzerTest extends AnalyzerTestCase
     public function test_query_with_index()
     {
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::where('key', 'response')));
+        $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::where('relationEntity.key', 'response')));
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::where(function ($query) {
             $query->orWhere('value', 42)->orWhere('key', 'response');
         })));

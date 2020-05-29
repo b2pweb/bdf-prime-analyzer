@@ -3,7 +3,7 @@
 namespace Bdf\Prime\Analyzer\Query;
 
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
-use Bdf\Prime\Mapper\Metadata;
+use Bdf\Prime\Analyzer\Repository\Util\RepositoryUtil;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Repository\RepositoryInterface;
 
@@ -17,10 +17,21 @@ final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyze
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {
-        return array_map(
-            function (string $attribute) { return 'Use of undeclared attribute "'.$attribute.'".'; },
-            array_values($this->listNotDeclaredAttributes($repository->metadata(), $query->statements['where'], $parameters))
-        );
+        // Do not analyse join queries
+        if (!empty($query->statements['joins'])) {
+            return [];
+        }
+
+        $util = new RepositoryUtil($repository);
+
+        return RecursiveClauseIterator::where($query)->stream()
+            ->filter(function ($clause) use($util) { return isset($clause['column']) && !$util->hasAttribute($clause['column']); })
+            ->map(function ($clause) { return $clause['column']; })
+            ->filter(function ($attribute) use($parameters) { return !in_array($attribute, $parameters); })
+            ->distinct()
+            ->map(function ($attribute) { return 'Use of undeclared attribute "'.$attribute.'".'; })
+            ->toArray(false)
+        ;
     }
 
     /**
@@ -29,31 +40,5 @@ final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyze
     public function type(): string
     {
         return 'not_declared';
-    }
-
-    /**
-     * List the not declared attributes
-     *
-     * @param Metadata $metadata The repository metadata
-     * @param array $clauses Query clause du analyze
-     * @param array $parameters
-     *
-     * @return string[]
-     *
-     * @todo check embedded and relations
-     */
-    private function listNotDeclaredAttributes(Metadata $metadata, array $clauses, array $parameters): array
-    {
-        $attributes = [];
-
-        foreach ($clauses as $condition) {
-            if (isset($condition['column']) && strpos($condition['column'], '.') === false && !$metadata->attributeExists($condition['column']) && !in_array($condition['column'], $parameters)) {
-                $attributes[$condition['column']] = $condition['column'];
-            } elseif (isset($condition['nested'])) {
-                $attributes += $this->listNotDeclaredAttributes($metadata, $condition['nested'], $parameters);
-            }
-        }
-
-        return $attributes;
     }
 }
