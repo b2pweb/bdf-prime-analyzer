@@ -173,4 +173,58 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
         $this->assertEmpty($report->errors());
     }
+
+    /**
+     *
+     */
+    public function test_update_query()
+    {
+        TestEntity::repository()->where('id', 5)->update(['value' => 42]);
+
+        $this->assertCount(1, $this->service->reports());
+        $this->assertEmpty($this->service->reports()[0]->errors());
+
+        TestEntity::repository()->where('_key', 5)->update(['value' => 42]);
+
+        $this->assertCount(2, $this->service->reports());
+        $this->assertEquals(['Use of undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+    }
+
+    /**
+     *
+     */
+    public function test_delete_query()
+    {
+        TestEntity::repository()->where('id', 5)->delete();
+
+        $this->assertCount(1, $this->service->reports());
+        $this->assertEmpty($this->service->reports()[0]->errors());
+
+        TestEntity::repository()->where('_key', 5)->delete();
+
+        $this->assertCount(2, $this->service->reports());
+        $this->assertEquals(['Use of undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+    }
+
+    /**
+     *
+     */
+    public function test_insert_query()
+    {
+        TestEntity::repository()->builder()->insert([
+            'key' => 'response',
+            'value' => 42,
+        ]);
+
+        $this->assertCount(1, $this->service->reports());
+        $this->assertEmpty($this->service->reports()[0]->errors());
+
+        TestEntity::repository()->builder()->insert([
+            '_key' => 'response',
+            'value' => 42,
+        ]);
+
+        $this->assertCount(2, $this->service->reports());
+        $this->assertEquals(['Write on undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+    }
 }

@@ -17,10 +17,13 @@ final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerI
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {
-        return array_map(
-            function (string $filter) { return 'Like without wildcard on field "'.$filter.'".'; },
-            array_values($this->invalidLikeFilters($query->statements['where']))
-        );
+        return RecursiveClauseIterator::where($query)->stream()
+            ->filter([$this, 'checkLikeCondition'])
+            ->map(function ($condition) { return $condition['column']; })
+            ->distinct()
+            ->map(function (string $filter) { return 'Like without wildcard on field "'.$filter.'".'; })
+            ->toArray(false)
+        ;
     }
 
     /**
@@ -32,38 +35,13 @@ final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerI
     }
 
     /**
-     * Get invalid like filters
-     *
-     * @param array $clauses
-     *
-     * @return string[]
-     */
-    private function invalidLikeFilters(array $clauses): array
-    {
-        $filters = [];
-
-        foreach ($clauses as $condition) {
-            if (isset($condition['nested'])) {
-                $filters += $this->invalidLikeFilters($condition['nested']);
-                continue;
-            }
-
-            if ($this->checkLikeCondition($condition)) {
-                $filters[$condition['column']] = $condition['column'];
-            }
-        }
-
-        return $filters;
-    }
-
-    /**
      * Check a single like condition
      *
      * @param array $condition
      *
      * @return bool true if invalid (should be returned by invalidLikeFilters)
      */
-    private function checkLikeCondition(array $condition): bool
+    public function checkLikeCondition(array $condition): bool
     {
         if (!isset($condition['column'])) {
             return false;

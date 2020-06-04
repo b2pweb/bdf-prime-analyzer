@@ -44,6 +44,8 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileInsert(CompilableClause $query)
     {
+        $this->analyze($query);
+
         return $this->compiler->compileInsert($query);
     }
 
@@ -52,6 +54,8 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileUpdate(CompilableClause $query)
     {
+        $this->analyze($query);
+
         return $this->compiler->compileUpdate($query);
     }
 
@@ -60,6 +64,8 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileDelete(CompilableClause $query)
     {
+        $this->analyze($query);
+
         return $this->compiler->compileDelete($query);
     }
 
@@ -68,10 +74,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileSelect(CompilableClause $query)
     {
-        if ($report = $this->service->createReport($this->analyzer->entity($query))) {
-            $this->analyzer->analyze($report, $query);
-            $this->service->push($report);
-        }
+        $this->analyze($query);
 
         return $this->compiler->compileSelect($query);
     }
@@ -98,5 +101,13 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
     public function getBindings(CompilableClause $query)
     {
         return $this->compiler->getBindings($query);
+    }
+
+    private function analyze(CompilableClause $query): void
+    {
+        if ($report = $this->service->createReport($this->analyzer->entity($query))) {
+            $this->analyzer->analyze($report, $query);
+            $this->service->push($report);
+        }
     }
 }

@@ -2,9 +2,11 @@
 
 namespace Bdf\Prime\Analyzer;
 
+use Bdf\Prime\Analyzer\BulkInsertQuery\BulkInsertQueryAnalyzer;
 use Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
+use Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
 use Bdf\Prime\Query\Query;
 use Bdf\Prime\ServiceLocator;
@@ -54,6 +56,7 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
             return [
                 Query::class => $app->get(SqlQueryAnalyzer::class),
                 KeyValueQuery::class => $app->get(KeyValueQueryAnalyzer::class),
+                BulkInsertQuery::class => $app->get(BulkInsertQueryAnalyzer::class),
             ];
         });
 
@@ -63,6 +66,10 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
 
         $app->set(KeyValueQueryAnalyzer::class, function (Application $app) {
             return new KeyValueQueryAnalyzer($app->get(ServiceLocator::class));
+        });
+
+        $app->set(BulkInsertQueryAnalyzer::class, function (Application $app) {
+            return new BulkInsertQueryAnalyzer($app->get(ServiceLocator::class));
         });
 
         $app->set(AnalyzerReportDumper::class, function () {

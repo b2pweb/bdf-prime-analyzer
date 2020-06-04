@@ -6,6 +6,7 @@ use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Mapper\Metadata;
 use Bdf\Prime\Query\AbstractReadCommand;
 use Bdf\Prime\Query\CompilableClause;
+use Bdf\Prime\Query\Contract\Compilable;
 use Bdf\Prime\Query\QueryRepositoryExtension;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
@@ -32,7 +33,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
 
         // @todo ignore relation query
         // Ignore unsupported statements
-        if ($this->hasStatements($query, ['joins', 'distinct', 'groups', 'having', 'lock', 'orders'])) {
+        if ($query->type() !== Compilable::TYPE_SELECT || $this->hasStatements($query, ['joins', 'distinct', 'groups', 'having', 'lock', 'orders'])) {
             return [];
         }
 

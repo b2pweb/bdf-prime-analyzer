@@ -4,6 +4,7 @@ namespace Bdf\Prime\Analyzer;
 
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
+use Bdf\Prime\Analyzer\BulkInsertQuery\BulkInsertQueryAnalyzer;
 use Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
@@ -40,6 +41,7 @@ class PrimeAnalyzerServiceProviderTest extends AnalyzerTestCase
         $this->assertInstanceOf(AnalyzerService::class, $this->app[AnalyzerService::class]);
         $this->assertInstanceOf(SqlQueryAnalyzer::class, $this->app[SqlQueryAnalyzer::class]);
         $this->assertInstanceOf(KeyValueQueryAnalyzer::class, $this->app[KeyValueQueryAnalyzer::class]);
+        $this->assertInstanceOf(BulkInsertQueryAnalyzer::class, $this->app[BulkInsertQueryAnalyzer::class]);
         $this->assertInstanceOf(AnalyzerReportDumper::class, $this->app[AnalyzerReportDumper::class]);
     }
 

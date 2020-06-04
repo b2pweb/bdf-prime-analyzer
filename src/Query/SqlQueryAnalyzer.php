@@ -24,7 +24,7 @@ final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
         parent::__construct($serviceLocator, $analyzers ?? [
             new OrNotNestedAnalyzer(), new MissingIndexAnalyzer(), new NotDeclaredAttributesAnalyzer(),
             new NotIndexedSortAnalyzer(), new RelationDistantKeyAnalyzer(), new LikeWithoutWildcardAnalyzer(),
-            new QueryOptimisationAnalyser(),
+            new QueryOptimisationAnalyser(), new WriteAttributesAnalyzer(),
         ]);
     }
 

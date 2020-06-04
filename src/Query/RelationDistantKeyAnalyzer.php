@@ -18,13 +18,14 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {
-        $errors = [];
-
-        foreach ($this->listDistantKeys($repository, $query->statements['where']) as $distant => $local) {
-            $errors[] = 'Use of relation distant key "'.$distant.'" which can cause an unnecessary join. Prefer use the local key "'.$local.'"';
-        }
-
-        return $errors;
+        return RecursiveClauseIterator::where($query)->stream()
+            ->filter(function ($condition) { return isset($condition['column']); })
+            ->mapKey(function ($condition) { return $condition['column']; })
+            ->map(function ($condition) use($repository) { return $this->relationLocalKey($repository, $condition['column']); })
+            ->filter(function ($localKey) { return !empty($localKey); })
+            ->map(function($local, $distant) { return 'Use of relation distant key "'.$distant.'" which can cause an unnecessary join. Prefer use the local key "'.$local.'"'; })
+            ->toArray(false)
+        ;
     }
 
     /**
@@ -33,29 +34,6 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
     public function type(): string
     {
         return 'relation_distant_key';
-    }
-
-    /**
-     * List the distant keys, mapped with the related local key
-     *
-     * @param RepositoryInterface $repository
-     * @param array $clauses
-     *
-     * @return string[]
-     */
-    private function listDistantKeys(RepositoryInterface $repository, array $clauses): array
-    {
-        $filters = [];
-
-        foreach ($clauses as $condition) {
-            if (isset($condition['nested'])) {
-                $filters += $this->listDistantKeys($repository, $condition['nested']);
-            } elseif (isset($condition['column']) && $localKey = $this->relationLocalKey($repository, $condition['column'])) {
-                $filters[$condition['column']] = $localKey;
-            }
-        }
-
-        return $filters;
     }
 
     /**

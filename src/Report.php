@@ -3,6 +3,7 @@
 namespace Bdf\Prime\Analyzer;
 
 use Bdf\Collection\Util\Hashable;
+use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Query\CommandInterface;
 use Bdf\Prime\Query\QueryRepositoryExtension;
 use Bdf\Prime\Relations\RelationInterface;
@@ -262,6 +263,16 @@ final class Report implements Hashable
                 && $trace['function'] === 'execute'
                 && isset($trace['class'])
                 && is_subclass_of($trace['class'], CommandInterface::class)
+            ) {
+                $executeFound = true;
+            }
+
+            // Search the ConnectionInterface->execute() call
+            if (
+                !$executeFound
+                && $trace['function'] === 'execute'
+                && isset($trace['class'])
+                && is_subclass_of($trace['class'], ConnectionInterface::class)
             ) {
                 $executeFound = true;
             }

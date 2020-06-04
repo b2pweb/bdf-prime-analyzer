@@ -1,29 +1,30 @@
 <?php
 
-namespace Bdf\Prime\Analyzer\KeyValueQuery;
+namespace Bdf\Prime\Analyzer\BulkInsertQuery;
 
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
+use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
-use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
+use Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery;
 use Bdf\Prime\ServiceLocator;
 
 /**
- * Analyzer for a key value query
+ * Analyzer for BulkInsertQuery
  *
- * @see KeyValueQuery
+ * @see BulkInsertQuery
  */
-final class KeyValueQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
+final class BulkInsertQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
 {
     /**
-     * KeyValueQueryAnalyzer constructor.
+     * BulkInsertQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
-     * @param array|null $analyzers
+     * @param RepositoryQueryErrorAnalyzerInterface[]|null $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
     {
         parent::__construct($serviceLocator, $analyzers ?? [
-            new NotDeclaredAttributesAnalyzer(), new MissingIndexAnalyzer(), new UpdateValuesAnalyzer(),
+            new InsertValuesAnalyzer(),
         ]);
     }
 
