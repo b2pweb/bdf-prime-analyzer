@@ -3,7 +3,9 @@
 namespace Bdf\Prime\Analyzer\Repository;
 
 use Bdf\Prime\Analyzer\AnalyzerInterface;
+use Bdf\Prime\Analyzer\IgnoreTagParser;
 use Bdf\Prime\Analyzer\Report;
+use Bdf\Prime\Mapper\Mapper;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\ServiceLocator;
@@ -22,6 +24,11 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      * @var RepositoryQueryErrorAnalyzerInterface[]
      */
     private $analyzers;
+
+    /**
+     * @var array
+     */
+    private $analyzersParameters = [];
 
     /**
      * SqlQueryAnalyzer constructor.
@@ -44,10 +51,7 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
             return;
         }
 
-        $parameters = method_exists($repository->mapper(), 'primeAnalyzerParameters')
-            ? $repository->mapper()->primeAnalyzerParameters()
-            : []
-        ;
+        $parameters = $this->analyzersParameters($repository->mapper());
 
         foreach ($this->analyzers as $analyzer) {
             if ($report->isIgnored($analyzer->type())) {
@@ -85,5 +89,30 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
         }
 
         return null;
+    }
+
+    /**
+     * Get the analyzer parameters for the given mapper
+     *
+     * @param Mapper $mapper
+     *
+     * @return string[][]
+     * @throws \ReflectionException
+     */
+    private function analyzersParameters(Mapper $mapper): array
+    {
+        if (isset($this->analyzersParameters[$mapper->getEntityClass()])) {
+            return $this->analyzersParameters[$mapper->getEntityClass()];
+        }
+
+        $reflection = new \ReflectionClass($mapper);
+        $docblock = $reflection->getDocComment();
+        $parameters = [];
+
+        foreach (IgnoreTagParser::parseDocBlock($docblock) as $tag) {
+            $parameters[$tag[0]] = array_slice($tag, 1) ?: false;
+        }
+
+        return $this->analyzersParameters[$mapper->getEntityClass()] = $parameters;
     }
 }

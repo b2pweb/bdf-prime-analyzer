@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer\Query;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
+use AnalyzerTest\TestEntityMapper;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Query\Query;
@@ -35,7 +36,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $this->service = new AnalyzerService([Query::class => $this->analyzer]);
         $this->service->configure($this->prime->connection('test'));
         $this->service->addIgnoredAnalysis('optimisation');
-        $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();
+        $this->testPack->declareEntity([TestEntity::class, RelationEntity::class, TestEntityWithIgnore::class])->initialize();
     }
 
     /**
@@ -49,7 +50,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(46, $report->line());
+        $this->assertEquals(47, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());
@@ -137,7 +138,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
     {
         TestEntity::repository()->builder()
             ->where('_value', 42)
-            ->execute() // @analyzer-ignore not_declared
+            ->execute() // @prime-analyzer-ignore not_declared
         ;
 
         $report = $this->service->reports()[0];
@@ -152,7 +153,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
     {
         TestEntity::repository()->mapper()->primeAnalyzerParameters['not_declared'] = false;
 
-        TestEntity::repository()->builder()
+        TestEntityWithIgnore::repository()->builder()
             ->where('_value', 42)
             ->execute()
         ;
@@ -226,5 +227,21 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertCount(2, $this->service->reports());
         $this->assertEquals(['Write on undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+    }
+}
+
+class TestEntityWithIgnore extends TestEntity
+{
+
+}
+
+/**
+ * @prime-analyzer-ignore not_declared
+ */
+class TestEntityWithIgnoreMapper extends TestEntityMapper
+{
+    public function schema()
+    {
+        return ['table' => 'with_ignore'] + parent::schema();
     }
 }

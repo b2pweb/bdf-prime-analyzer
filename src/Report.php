@@ -97,16 +97,10 @@ final class Report implements Hashable
      */
     private function loadIgnored()
     {
-        $ignoreTag = '@analyzer-ignore';
         $line = file($this->file)[$this->line - 1];
-        $tagPos = strpos($line, $ignoreTag);
 
-        if ($tagPos === false) {
-            return;
-        }
-
-        foreach (explode(' ', substr($line, $tagPos + strlen($ignoreTag))) as $item) {
-            $this->ignore(trim($item));
+        foreach (IgnoreTagParser::parseLine($line) as $ignored) {
+            $this->ignore($ignored);
         }
     }
 

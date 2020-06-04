@@ -8,8 +8,6 @@ use Bdf\Prime\Mapper\Mapper;
 
 class TestEntityMapper extends Mapper
 {
-    public $primeAnalyzerParameters = [];
-
     public function schema()
     {
         return [
@@ -46,10 +44,5 @@ class TestEntityMapper extends Mapper
             ->on('embeddedRelation')
             ->belongsTo(RelationEntity::class.'::key', 'embeddedRelation.key')
         ;
-    }
-
-    public function primeAnalyzerParameters()
-    {
-        return $this->primeAnalyzerParameters;
     }
 }

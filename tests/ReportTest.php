@@ -93,7 +93,7 @@ class ReportTest extends AnalyzerTestCase
      */
     public function test_ignore_tag()
     {
-        TestEntity::all(); // @analyzer-ignore aaa bbb
+        TestEntity::all(); // @prime-analyzer-ignore aaa bbb
 
         $report = $this->service->reports()[0];
 
