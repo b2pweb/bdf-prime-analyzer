@@ -4,8 +4,11 @@ namespace Bdf\Prime\Analyzer\Repository;
 
 use Bdf\Collection\Stream\StreamInterface;
 use Bdf\Collection\Stream\Streams;
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Mapper\Metadata;
 use Bdf\Prime\Query\CompilableClause;
+use Bdf\Prime\Query\Expression\ExpressionInterface;
+use Bdf\Prime\Query\Expression\ExpressionTransformerInterface;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\Types\TypeInterface;
 
@@ -47,7 +50,7 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      */
     final public function type(): string
     {
-        return 'write';
+        return AnalysisTypes::WRITE;
     }
 
     /**
@@ -88,6 +91,10 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
 
     private function checkType(string $typename, $value): bool
     {
+        if ($value instanceof ExpressionInterface || $value instanceof ExpressionTransformerInterface) {
+            return true;
+        }
+
         switch ($typename) {
             case TypeInterface::TINYINT:
                 return (string) $value === (string) (int) $value && $value >= -128 && $value <= 255;
@@ -113,7 +120,7 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
                 return in_array($value, [0, 1, true, false, '0', '1'], true);
 
             case TypeInterface::DATETIME:
-                return $value instanceof \DateTime || @\DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false;
+                return $value instanceof \DateTimeInterface || @\DateTime::createFromFormat('Y-m-d H:i:s', $value) !== false;
 
             default:
                 return true;

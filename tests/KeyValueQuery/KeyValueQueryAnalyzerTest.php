@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer\KeyValueQuery;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
+use AnalyzerTest\TestEntityOtherConnection;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
@@ -40,6 +41,15 @@ class KeyValueQueryAnalyzerTest extends AnalyzerTestCase
     /**
      *
      */
+    public function test_entity()
+    {
+        $this->assertSame(TestEntity::class, $this->analyzer->entity(TestEntity::keyValue()));
+        $this->assertSame(TestEntityOtherConnection::class, $this->analyzer->entity(TestEntityOtherConnection::keyValue()));
+    }
+
+    /**
+     *
+     */
     public function test_success()
     {
         TestEntity::findById(5);
@@ -48,7 +58,7 @@ class KeyValueQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(45, $report->line());
+        $this->assertEquals(55, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());

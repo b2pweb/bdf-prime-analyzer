@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Expression\Like;
@@ -31,7 +32,7 @@ final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerI
      */
     public function type(): string
     {
-        return 'like';
+        return AnalysisTypes::LIKE;
     }
 
     /**

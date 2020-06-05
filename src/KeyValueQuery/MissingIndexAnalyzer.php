@@ -3,6 +3,7 @@
 namespace Bdf\Prime\Analyzer\KeyValueQuery;
 
 use Bdf\Collection\Stream\Streams;
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Analyzer\Repository\Util\RepositoryUtil;
 use Bdf\Prime\Query\CompilableClause;
@@ -31,6 +32,6 @@ final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
      */
     public function type(): string
     {
-        return 'index';
+        return AnalysisTypes::INDEX;
     }
 }

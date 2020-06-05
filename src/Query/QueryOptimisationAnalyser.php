@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Mapper\Metadata;
 use Bdf\Prime\Query\AbstractReadCommand;
@@ -52,7 +53,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
      */
     public function type(): string
     {
-        return 'optimisation';
+        return AnalysisTypes::OPTIMISATION;
     }
 
     private function hasStatements(CompilableClause $query, array $statements): bool

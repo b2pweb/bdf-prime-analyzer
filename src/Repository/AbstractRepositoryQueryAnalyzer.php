@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer\Repository;
 use Bdf\Prime\Analyzer\AnalyzerInterface;
 use Bdf\Prime\Analyzer\IgnoreTagParser;
 use Bdf\Prime\Analyzer\Report;
+use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Mapper\Mapper;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Repository\RepositoryInterface;
@@ -74,16 +75,17 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      * Resolve a repository by the class name
      * Requires that the repository has been loaded before analysis
      *
+     * @param ConnectionInterface $connection The used connection
      * @param string $tableName The table name
      *
      * @return RepositoryInterface|null
      */
-    final protected function repositoryByTableName(string $tableName): ?RepositoryInterface
+    final protected function repositoryByTableName(ConnectionInterface $connection, string $tableName): ?RepositoryInterface
     {
         foreach ($this->serviceLocator->repositoryNames() as $name) {
             $repository = $this->serviceLocator->repository($name);
 
-            if ($repository->metadata()->table() === $tableName) {
+            if ($repository->metadata()->connection() === $connection->getName() && $repository->metadata()->table() === $tableName) {
                 return $repository;
             }
         }

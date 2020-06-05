@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Analyzer\Repository\Util\RepositoryUtil;
 use Bdf\Prime\Query\CompilableClause;
@@ -39,6 +40,6 @@ final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyze
      */
     public function type(): string
     {
-        return 'not_declared';
+        return AnalysisTypes::NOT_DECLARED;
     }
 }

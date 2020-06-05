@@ -46,6 +46,10 @@ class AnalyzerTestCase extends TestCase
                         'adapter' => 'sqlite',
                         'memory' => true
                     ],
+                    'other' => [
+                        'adapter' => 'sqlite',
+                        'memory' => true
+                    ],
                 ]
             ],
         ]);

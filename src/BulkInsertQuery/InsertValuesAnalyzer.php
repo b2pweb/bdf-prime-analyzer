@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\BulkInsertQuery;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\AbstractWriteAttributesAnalyzer;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
@@ -37,6 +38,6 @@ final class InsertValuesAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
      */
     public function type(): string
     {
-        return 'insert';
+        return AnalysisTypes::WRITE;
     }
 }

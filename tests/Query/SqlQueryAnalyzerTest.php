@@ -6,6 +6,7 @@ use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use AnalyzerTest\TestEntityMapper;
+use AnalyzerTest\TestEntityOtherConnection;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Query\Query;
@@ -42,6 +43,15 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
     /**
      *
      */
+    public function test_entity()
+    {
+        $this->assertSame(TestEntity::class, $this->analyzer->entity(TestEntity::builder()));
+        $this->assertSame(TestEntityOtherConnection::class, $this->analyzer->entity(TestEntityOtherConnection::builder()));
+    }
+
+    /**
+     *
+     */
     public function test_success()
     {
         TestEntity::get('foo');
@@ -50,7 +60,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(47, $report->line());
+        $this->assertEquals(57, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());

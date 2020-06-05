@@ -32,6 +32,6 @@ final class KeyValueQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      */
     public function entity(CompilableClause $query): ?string
     {
-        return ($repository = $this->repositoryByTableName($query->statements['table'])) ? $repository->entityClass() : null;
+        return ($repository = $this->repositoryByTableName($query->connection(), $query->statements['table'])) ? $repository->entityClass() : null;
     }
 }

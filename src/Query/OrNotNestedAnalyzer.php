@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Repository\RepositoryInterface;
@@ -39,6 +40,6 @@ final class OrNotNestedAnalyzer implements RepositoryQueryErrorAnalyzerInterface
      */
     public function type(): string
     {
-        return 'or';
+        return AnalysisTypes::OR;
     }
 }

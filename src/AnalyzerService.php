@@ -84,7 +84,7 @@ class AnalyzerService
             $savedReport->merge($report); // @todo N+1 check
 
             // Ignore N+1 caused by with : they are either false positive or caused by a real N+1 already reported
-            if (!$report->isIgnored('n+1') && !$report->isWith()) {
+            if (!$report->isIgnored(AnalysisTypes::N_PLUS_1) && !$report->isWith()) {
                 $savedReport->addError('Suspicious N+1 or loop query');
             }
         } else {

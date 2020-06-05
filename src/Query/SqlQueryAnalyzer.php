@@ -33,6 +33,6 @@ final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      */
     public function entity(CompilableClause $query): ?string
     {
-        return ($repository = $this->repositoryByTableName($query->statements['tables'][0]['table'])) ? $repository->entityClass() : null;
+        return ($repository = $this->repositoryByTableName($query->connection(), $query->statements['tables'][0]['table'])) ? $repository->entityClass() : null;
     }
 }

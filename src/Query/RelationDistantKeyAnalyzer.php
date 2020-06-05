@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Relations\Exceptions\RelationNotFoundException;
@@ -33,7 +34,7 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
      */
     public function type(): string
     {
-        return 'relation_distant_key';
+        return AnalysisTypes::RELATION_DISTANT_KEY;
     }
 
     /**
