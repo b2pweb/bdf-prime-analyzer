@@ -69,7 +69,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
 
     private function isKeyValueQuery(Metadata $metadata, CompilableClause $query)
     {
-        foreach ($query->statements['where'] as $filter) {
+        foreach ($this->getStatements($query) as $filter) {
             // Supports only key value filters (ignore nested, or, operators and relations)
             if (
                 !isset($filter['column'])
@@ -92,12 +92,14 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
             return false;
         }
 
+        $statements = $this->getStatements($query);
+
         // Check the columns
-        if (count($query->statements['where']) !== count($repository->metadata()->primary['attributes'])) {
+        if (count($statements) !== count($repository->metadata()->primary['attributes'])) {
             return false;
         }
 
-        foreach ($query->statements['where'] as $filter) {
+        foreach ($statements as $filter) {
             if (!in_array($filter['column'], $repository->metadata()->primary['attributes'])) {
                 return false;
             }
@@ -112,5 +114,20 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
 
         // The query extension must be empty
         return $extension == new QueryRepositoryExtension($repository);
+    }
+
+    /**
+     * Get the where statements
+     * This method handle query with a single nested statement (i.e. when call where() with an array)
+     *
+     * @param CompilableClause $query
+     * @return array
+     */
+    private function getStatements(CompilableClause $query): array
+    {
+        return count($query->statements['where']) === 1 && isset($query->statements['where'][0]['nested'])
+            ? $query->statements['where'][0]['nested']
+            : $query->statements['where']
+        ;
     }
 }

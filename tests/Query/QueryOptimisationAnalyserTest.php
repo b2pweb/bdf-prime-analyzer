@@ -41,6 +41,7 @@ class QueryOptimisationAnalyserTest extends AnalyzerTestCase
         $this->assertEquals(['Optimisation: use AnalyzerTest\TestEntity::keyValue() instead'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('value', 5)));
         $this->assertEquals(['Optimisation: use AnalyzerTest\TestEntity::keyValue() instead'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('value', 5)->where('id', 5)));
         $this->assertEquals(['Optimisation: use AnalyzerTest\TestEntity::keyValue() instead'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('id', 5)->with('relationEntity')));
+        $this->assertEquals(['Optimisation: use AnalyzerTest\TestEntity::keyValue() instead'], $this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where(['id' => 5, 'value' => 'foo'])));
 
         $countQuery = TestEntity::repository()->where('id', 5);
         $countQuery->statements['aggregate'] = ['count', '*'];
