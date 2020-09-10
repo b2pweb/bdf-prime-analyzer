@@ -7,7 +7,10 @@ use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
+use Bdf\Prime\Query\CompilableClause;
+use Bdf\Prime\Query\Compiler\Preprocessor\PreprocessorInterface;
 use Bdf\Prime\Query\Query;
+use Bdf\Prime\Repository\EntityRepository;
 
 /**
  * Class AnalyzerServiceTest
@@ -121,6 +124,21 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         $this->service->reset();
 
         $this->assertEmpty($this->service->reports());
+    }
+
+    /**
+     *
+     */
+    public function test_analyze()
+    {
+        $this->assertNull($this->service->analyze(new CompilableClause($this->createMock(PreprocessorInterface::class))));
+
+        $report = $this->service->analyze(TestEntity::where('foo', 'bar'));
+
+        $this->assertEquals(TestEntity::class, $report->entity());
+        $this->assertEquals(0, $report->line());
+        $this->assertEquals('', $report->file());
+        $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.', 'Use of undeclared attribute "foo".'], $report->errors());
     }
 
     /**

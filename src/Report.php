@@ -69,13 +69,20 @@ final class Report implements Hashable
      * Report constructor.
      *
      * @param string|null $entity
+     * @param bool $loadStackTrace
      */
-    public function __construct(?string $entity)
+    public function __construct(?string $entity, bool $loadStackTrace = true)
     {
         $this->entity = $entity;
 
-        $this->initializeStackTrace();
-        $this->loadIgnored();
+        if ($loadStackTrace) {
+            $this->initializeStackTrace();
+            $this->loadIgnored();
+        } else {
+            $this->line = 0;
+            $this->file = '';
+            $this->stackTrace = [];
+        }
     }
 
     /**

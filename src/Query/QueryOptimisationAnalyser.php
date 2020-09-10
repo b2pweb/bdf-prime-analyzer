@@ -76,6 +76,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
                 || $filter['glue'] !== CompositeExpression::TYPE_AND
                 || !in_array($filter['operator'], ['=', ':eq'])
                 || is_array($filter['value'])
+                || $filter['value'] === null
                 || !$metadata->attributeExists($filter['column'])
             ) {
                 return false;

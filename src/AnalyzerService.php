@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer;
 use Bdf\Collection\HashSet;
 use Bdf\Collection\SetInterface;
 use Bdf\Prime\Connection\ConnectionInterface;
+use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 
 /**
@@ -90,6 +91,30 @@ class AnalyzerService
         } else {
             $this->reports->add($report);
         }
+    }
+
+    /**
+     * Perform analysis on a query
+     * Note: the result will not be push()ed into the service
+     *
+     * @param CompilableClause $query
+     *
+     * @return Report|null
+     */
+    public function analyze(CompilableClause $query): ?Report
+    {
+        $type = get_class($query);
+
+        if (!isset($this->analyzerByQuery[$type])) {
+            return null;
+        }
+
+        $analyzer = $this->analyzerByQuery[$type];
+        $report = new Report($analyzer->entity($query), false);
+
+        $analyzer->analyze($report, $query);
+
+        return $report;
     }
 
     /**

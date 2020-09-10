@@ -57,5 +57,6 @@ class QueryOptimisationAnalyserTest extends AnalyzerTestCase
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('id', '>', 5)));
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('id', [5, 6])));
         $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('id', 5)->join('relation', 'key')));
+        $this->assertEmpty($this->analyzer->analyze(TestEntity::repository(), TestEntity::repository()->where('id', null)));
     }
 }
