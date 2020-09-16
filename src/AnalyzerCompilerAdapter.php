@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer;
 
+use Bdf\Prime\Platform\PlatformInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Compiler\CompilerInterface;
 
@@ -82,7 +83,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
     /**
      * {@inheritdoc}
      */
-    public function platform()
+    public function platform(): PlatformInterface
     {
         return $this->compiler->platform();
     }
@@ -90,13 +91,15 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
     /**
      * {@inheritdoc}
      */
-    public function quoteIdentifier(CompilableClause $query, $column)
+    public function quoteIdentifier(CompilableClause $query, $column): string
     {
         return $this->compiler->quoteIdentifier($query, $column);
     }
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     public function getBindings(CompilableClause $query)
     {

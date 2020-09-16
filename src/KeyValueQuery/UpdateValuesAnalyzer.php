@@ -7,6 +7,8 @@ use Bdf\Prime\Query\CompilableClause;
 
 /**
  * Analyze the values of update query
+ *
+ * @extends AbstractWriteAttributesAnalyzer<\Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery>
  */
 final class UpdateValuesAnalyzer extends AbstractWriteAttributesAnalyzer
 {

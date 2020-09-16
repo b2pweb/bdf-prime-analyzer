@@ -21,7 +21,7 @@ final class Report implements Hashable
     private static $primeDirectory;
 
     /**
-     * @var array
+     * @var array<int, array<string, string>>
      */
     private $stackTrace;
 
@@ -61,7 +61,7 @@ final class Report implements Hashable
     private $postProcess = false;
 
     /**
-     * @var string[]
+     * @var array<string, bool>
      */
     private $ignored = [];
 
@@ -90,7 +90,7 @@ final class Report implements Hashable
      *
      * @throws \ReflectionException
      */
-    private function initializeStackTrace()
+    private function initializeStackTrace(): void
     {
         $this->stackTrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $this->stackTrace = array_slice($this->stackTrace, $this->findQueryExecuteCall());
@@ -102,7 +102,7 @@ final class Report implements Hashable
     /**
      * Load the analyzer-ignore tag
      */
-    private function loadIgnored()
+    private function loadIgnored(): void
     {
         $line = file($this->file)[$this->line - 1];
 
@@ -135,7 +135,7 @@ final class Report implements Hashable
      * Get the calling stack trace for the query execution
      * The return format is the format of debug_backtrace()
      *
-     * @return array
+     * @return array<int, array<string, string>>
      *
      * @see debug_backtrace()
      */

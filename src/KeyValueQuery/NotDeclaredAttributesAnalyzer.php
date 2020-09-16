@@ -10,6 +10,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze use of not declared attributes
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery>
  */
 final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -21,7 +23,7 @@ final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyze
         $metadata = $repository->metadata();
 
         return Streams::wrap($query->statements['where'])
-            ->map(function ($value, $key) { return $key; })
+            ->map(function ($value, $key): string { return $key; })
             ->filter(function ($attribute) use($metadata) { return !$metadata->attributeExists($attribute); })
             ->filter(function ($attribute) use ($parameters) { return !in_array($attribute, $parameters); })
             ->map(function (string $attribute) { return 'Use of undeclared attribute "'.$attribute.'".'; })

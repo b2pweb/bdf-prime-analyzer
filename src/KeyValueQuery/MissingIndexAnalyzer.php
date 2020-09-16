@@ -11,6 +11,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze requests performed without any indexes
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery>
  */
 final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -20,7 +22,7 @@ final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {
         $indexed = empty($query->statements['where']) || Streams::wrap($query->statements['where'])
-            ->map(function ($value, $key) { return $key; })
+            ->map(function ($value, string $key): string { return $key; })
             ->matchOne([new RepositoryUtil($repository), 'isIndexed'])
         ;
 

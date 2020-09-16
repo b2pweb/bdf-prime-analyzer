@@ -19,7 +19,7 @@ class AnalyzerReportDumper
     private static $isRegistered = false;
 
     /**
-     * @var AnalyzerReportDumper
+     * @var AnalyzerReportDumper|null
      */
     private static $instance;
 
@@ -52,6 +52,7 @@ class AnalyzerReportDumper
         if (!self::$isRegistered) {
             register_shutdown_function(function () {
                 // Use closure to ensure that the value of self::$instance is used, in case of change
+                /** @psalm-suppress PossiblyNullReference */
                 self::$instance->dump();
             });
 
@@ -118,6 +119,7 @@ class AnalyzerReportDumper
      * Note: The instance must be register()ed manually
      *
      * @return AnalyzerReportDumper
+     * @psalm-suppress UnsafeInstantiation
      */
     public static function instance(): AnalyzerReportDumper
     {

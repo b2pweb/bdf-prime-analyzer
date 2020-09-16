@@ -11,6 +11,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze the user of relation's distant key, instead of the local key, which cause a join
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -19,9 +21,10 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {
+        /** @var string[] */
         return RecursiveClauseIterator::where($query)->stream()
             ->filter(function ($condition) { return isset($condition['column']); })
-            ->mapKey(function ($condition) { return $condition['column']; })
+            ->mapKey(function ($condition): string { return $condition['column']; })
             ->map(function ($condition) use($repository) { return $this->relationLocalKey($repository, $condition['column']); })
             ->filter(function ($localKey) { return !empty($localKey); })
             ->map(function($local, $distant) { return 'Use of relation distant key "'.$distant.'" which can cause an unnecessary join. Prefer use the local key "'.$local.'"'; })

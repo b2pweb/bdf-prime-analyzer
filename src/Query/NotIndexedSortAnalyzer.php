@@ -10,6 +10,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze sorted queries without index on the sorted field
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class NotIndexedSortAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {

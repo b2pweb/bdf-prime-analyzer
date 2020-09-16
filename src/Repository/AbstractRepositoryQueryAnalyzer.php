@@ -13,6 +13,9 @@ use Bdf\Prime\ServiceLocator;
 
 /**
  * Base query analyser type
+ *
+ * @template T of CompilableClause
+ * @implements AnalyzerInterface<T>
  */
 abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
 {
@@ -22,12 +25,12 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
     private $serviceLocator;
 
     /**
-     * @var RepositoryQueryErrorAnalyzerInterface[]
+     * @var RepositoryQueryErrorAnalyzerInterface<T>[]
      */
     private $analyzers;
 
     /**
-     * @var array
+     * @var array<string, array<string, string[]|false>>
      */
     private $analyzersParameters = [];
 
@@ -35,7 +38,7 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      * SqlQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
-     * @param RepositoryQueryErrorAnalyzerInterface[] $analyzers
+     * @param RepositoryQueryErrorAnalyzerInterface<T>[] $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, array $analyzers = [])
     {
@@ -48,6 +51,7 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      */
     final public function analyze(Report $report, CompilableClause $query): void
     {
+        /** @var RepositoryInterface $repository */
         if (!$report->entity() || (!$repository = $this->serviceLocator->repository($report->entity()))) {
             return;
         }
@@ -98,7 +102,7 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      *
      * @param Mapper $mapper
      *
-     * @return string[][]
+     * @return array<string, string[]|false>
      * @throws \ReflectionException
      */
     private function analyzersParameters(Mapper $mapper): array

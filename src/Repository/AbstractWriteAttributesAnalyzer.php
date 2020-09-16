@@ -14,6 +14,9 @@ use Bdf\Prime\Types\TypeInterface;
 
 /**
  * Analyze the values to write (i.e. insert or update)
+ *
+ * @template T of CompilableClause
+ * @implements RepositoryQueryErrorAnalyzerInterface<T>
  */
 abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -59,14 +62,14 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      * @param Metadata $metadata
      * @param array $values
      *
-     * @return StreamInterface
+     * @return StreamInterface<non-empty-string, mixed>
      */
     private function analyseUndeclared(Metadata $metadata, array $values): StreamInterface
     {
         return Streams::wrap($values)
-            ->map(function ($value, $key) { return $key; })
-            ->filter(function ($attribute) use($metadata) { return !$metadata->attributeExists($attribute); })
-            ->map(function (string $attribute) { return 'Write on undeclared attribute "'.$attribute.'".'; })
+            ->map(function ($value, $key): string { return $key; })
+            ->filter(function (string $attribute) use($metadata): bool { return !$metadata->attributeExists($attribute); })
+            ->map(function (string $attribute): string { return 'Write on undeclared attribute "'.$attribute.'".'; })
         ;
     }
 
@@ -74,9 +77,9 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      * Analyse if the values match with the corresponding type
      *
      * @param Metadata $metadata
-     * @param array $values
+     * @param array<string, mixed> $values
      *
-     * @return StreamInterface
+     * @return StreamInterface<non-empty-string, mixed>
      */
     private function analyseType(Metadata $metadata, array $values): StreamInterface
     {
@@ -85,10 +88,16 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
             ->filter(function ($value, $attribute) use($metadata) {
                 return isset($metadata->attributes[$attribute]) && !$this->checkType($metadata->attributes[$attribute]['type'], $value);
             })
-            ->map(function ($value, $attribute) { return 'Bad value "'.print_r($value, true).'" for "'.$attribute.'".'; })
+            ->map(function ($value, string $attribute): string { return 'Bad value "'.print_r($value, true).'" for "'.$attribute.'".'; })
         ;
     }
 
+    /**
+     * @param string $typename
+     * @param mixed $value
+     *
+     * @return bool
+     */
     private function checkType(string $typename, $value): bool
     {
         if ($value instanceof ExpressionInterface || $value instanceof ExpressionTransformerInterface) {

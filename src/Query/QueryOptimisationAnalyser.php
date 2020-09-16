@@ -11,16 +11,19 @@ use Bdf\Prime\Query\Contract\Compilable;
 use Bdf\Prime\Query\QueryRepositoryExtension;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Doctrine\DBAL\Query\Expression\CompositeExpression;
+use ReflectionProperty;
 
 /**
  * Analyse query which can be optimized using key value query or findById()
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInterface
 {
     /**
-     * @var \ReflectionProperty
+     * @var ReflectionProperty|null
      */
-    private $extensionProperty;
+    private $extensionProperty = null;
 
     /**
      * {@inheritdoc}
@@ -67,7 +70,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
         return false;
     }
 
-    private function isKeyValueQuery(Metadata $metadata, CompilableClause $query)
+    private function isKeyValueQuery(Metadata $metadata, CompilableClause $query): bool
     {
         foreach ($this->getStatements($query) as $filter) {
             // Supports only key value filters (ignore nested, or, operators and relations)
@@ -86,7 +89,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
         return true;
     }
 
-    private function isPrimaryKeyQuery(RepositoryInterface $repository, CompilableClause $query)
+    private function isPrimaryKeyQuery(RepositoryInterface $repository, CompilableClause $query): bool
     {
         // Ignore aggregate or projection queries (ex: count or inRow)
         if ($this->hasStatements($query, ['aggregate', 'columns'])) {
@@ -107,10 +110,11 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
         }
 
         if (!$this->extensionProperty) {
-            $this->extensionProperty = new \ReflectionProperty(AbstractReadCommand::class, 'extension');
+            $this->extensionProperty = new ReflectionProperty(AbstractReadCommand::class, 'extension');
             $this->extensionProperty->setAccessible(true);
         }
 
+        /** @var object $extension */
         $extension = $this->extensionProperty->getValue($query);
 
         // The query extension must be empty

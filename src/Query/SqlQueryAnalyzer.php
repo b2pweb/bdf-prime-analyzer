@@ -3,6 +3,7 @@
 namespace Bdf\Prime\Analyzer\Query;
 
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
+use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Query;
 use Bdf\Prime\ServiceLocator;
@@ -11,13 +12,14 @@ use Bdf\Prime\ServiceLocator;
  * Analyser for simple sql Query
  *
  * @see Query
+ * @extends AbstractRepositoryQueryAnalyzer<Query>
  */
 final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
 {
     /**
      * SqlQueryAnalyzer constructor.
      * @param ServiceLocator $serviceLocator
-     * @param array|null $analyzers
+     * @param RepositoryQueryErrorAnalyzerInterface<Query>[]|null $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
     {

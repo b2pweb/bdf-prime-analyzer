@@ -8,9 +8,12 @@ use Bdf\Collection\Stream\Streamable;
 use Bdf\Collection\Stream\StreamInterface;
 use Bdf\Prime\Query\Clause;
 use RecursiveIterator;
+use RecursiveIteratorIterator;
 
 /**
  * Iterate over nested query clause
+ *
+ * @template Streamable<array, array-key>
  */
 final class RecursiveClauseIterator extends ArrayIterator implements RecursiveIterator, Streamable
 {
@@ -32,10 +35,12 @@ final class RecursiveClauseIterator extends ArrayIterator implements RecursiveIt
 
     /**
      * {@inheritdoc}
+     *
+     * @return StreamInterface<array, array-key>
      */
     public function stream(): StreamInterface
     {
-        return new IteratorStream(new \RecursiveIteratorIterator($this));
+        return new IteratorStream(new RecursiveIteratorIterator($this));
     }
 
     /**

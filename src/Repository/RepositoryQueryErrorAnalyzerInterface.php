@@ -7,6 +7,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyzer for errors on queries related to a repository
+ *
+ * @template T of CompilableClause
  */
 interface RepositoryQueryErrorAnalyzerInterface
 {
@@ -14,7 +16,7 @@ interface RepositoryQueryErrorAnalyzerInterface
      * Analyze the query and return the errors
      *
      * @param RepositoryInterface $repository The related repository
-     * @param CompilableClause $query The query to analyze
+     * @param T $query The query to analyze
      * @param array $parameters Analysis parameter, like fields to ignore
      *
      * @return string[]

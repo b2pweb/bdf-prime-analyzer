@@ -7,6 +7,8 @@ use Bdf\Prime\Query\CompilableClause;
 
 /**
  * Analyze the values to write (i.e. insert or update)
+ *
+ * @extends AbstractWriteAttributesAnalyzer<\Bdf\Prime\Query\Query>
  */
 final class WriteAttributesAnalyzer extends AbstractWriteAttributesAnalyzer
 {

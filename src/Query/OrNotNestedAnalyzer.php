@@ -10,6 +10,8 @@ use Doctrine\DBAL\Query\Expression\CompositeExpression;
 
 /**
  * Analyze the OR conditions at the query root
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class OrNotNestedAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {

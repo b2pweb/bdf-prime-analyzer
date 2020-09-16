@@ -41,7 +41,7 @@ final class ConsoleDumpFormat implements DumpFormatInterface
      * @param string $message
      * @param string $level
      */
-    private function stdout($message, $level = 'info')
+    private function stdout(string $message, string $level = 'info'): void
     {
         if ($level === 'info') {
             $level = '42';

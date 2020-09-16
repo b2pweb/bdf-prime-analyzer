@@ -10,6 +10,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze requests performed without any indexes
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -25,7 +27,7 @@ final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
 
         $hasIndex = RecursiveClauseIterator::where($query)->stream()
             ->filter(function ($clause) { return isset($clause['column']); })
-            ->map(function ($clause) { return $clause['column']; })
+            ->map(function ($clause): string { return $clause['column']; })
             ->matchOne([new RepositoryUtil($repository), 'isIndexed'])
         ;
 

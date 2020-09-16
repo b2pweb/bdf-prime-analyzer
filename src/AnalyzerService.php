@@ -14,7 +14,7 @@ use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 class AnalyzerService
 {
     /**
-     * @var AnalyzerInterface[]
+     * @var array<class-string, AnalyzerInterface>
      */
     private $analyzerByQuery;
 
@@ -29,7 +29,7 @@ class AnalyzerService
     private $ignoredAnalysis;
 
     /**
-     * @var Report[]|SetInterface
+     * @var SetInterface
      */
     private $reports;
 
@@ -37,7 +37,7 @@ class AnalyzerService
     /**
      * AnalyzerService constructor.
      *
-     * @param AnalyzerInterface[] $analyzerByQuery
+     * @param array<class-string, AnalyzerInterface> $analyzerByQuery
      * @param string[] $ignoredPath
      * @param string[] $ignoredAnalysis
      */
@@ -80,8 +80,9 @@ class AnalyzerService
      */
     public function push(Report $report): void
     {
-        /** @var Report $savedReport */
+        /** @psalm-suppress MixedAssignment */
         if ($savedReport = $this->reports->lookup($report)->get()) {
+            /** @var Report $savedReport */
             $savedReport->merge($report); // @todo N+1 check
 
             // Ignore N+1 caused by with : they are either false positive or caused by a real N+1 already reported
@@ -121,6 +122,7 @@ class AnalyzerService
      * Get all generated reports
      *
      * @return Report[]
+     * @psalm-suppress MixedReturnTypeCoercion
      */
     public function reports(): array
     {

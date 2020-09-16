@@ -10,6 +10,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyse the insert values on a bulk insert query
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery>
  */
 final class InsertValuesAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {

@@ -10,6 +10,8 @@ use Bdf\Prime\Repository\RepositoryInterface;
 
 /**
  * Analyze the like filters to dump filters without a wildcard (% or _)
+ *
+ * @implements RepositoryQueryErrorAnalyzerInterface<\Bdf\Prime\Query\Query>
  */
 final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerInterface
 {
@@ -20,7 +22,7 @@ final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerI
     {
         return RecursiveClauseIterator::where($query)->stream()
             ->filter([$this, 'checkLikeCondition'])
-            ->map(function ($condition) { return $condition['column']; })
+            ->map(function ($condition): string { return $condition['column']; })
             ->distinct()
             ->map(function (string $filter) { return 'Like without wildcard on field "'.$filter.'".'; })
             ->toArray(false)

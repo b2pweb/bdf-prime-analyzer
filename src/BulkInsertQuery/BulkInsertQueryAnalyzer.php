@@ -12,6 +12,7 @@ use Bdf\Prime\ServiceLocator;
  * Analyzer for BulkInsertQuery
  *
  * @see BulkInsertQuery
+ * @extends AbstractRepositoryQueryAnalyzer<BulkInsertQuery>
  */
 final class BulkInsertQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
 {
@@ -19,7 +20,7 @@ final class BulkInsertQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      * BulkInsertQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
-     * @param RepositoryQueryErrorAnalyzerInterface[]|null $analyzers
+     * @param RepositoryQueryErrorAnalyzerInterface<BulkInsertQuery>[]|null $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
     {

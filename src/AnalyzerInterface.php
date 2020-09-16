@@ -5,15 +5,16 @@ namespace Bdf\Prime\Analyzer;
 use Bdf\Prime\Query\CompilableClause;
 
 /**
- * Interface AnalyzerInterface
- * @package Bdf\Prime\Analyzer
+ * Base type for analyze query
+ *
+ * @template T of CompilableClause
  */
 interface AnalyzerInterface
 {
     /**
      * Extract the entity class from the query
      *
-     * @param CompilableClause $query
+     * @param T $query
      *
      * @return string|null The entity class, or null if cannot be resolved
      */
@@ -21,7 +22,7 @@ interface AnalyzerInterface
 
     /**
      * @param Report $report
-     * @param CompilableClause $query
+     * @param T $query
      *
      * @return void
      */

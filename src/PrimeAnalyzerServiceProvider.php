@@ -20,14 +20,14 @@ use Bdf\Web\Providers\ServiceProviderInterface;
 class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, BootableProviderInterface
 {
     /**
-     * @var array
+     * @var array{ignoredPath: string[], ignoredAnalysis: string[], dumpFormats: \Bdf\Prime\Analyzer\Testing\DumpFormat\DumpFormatInterface[]|null, register: bool}
      */
     private $parameters;
 
     /**
      * PrimeAnalyzerServiceProvider constructor.
      *
-     * @param array $parameters
+     * @param array{ignoredPath?: string[], ignoredAnalysis?: string[], dumpFormats?: \Bdf\Prime\Analyzer\Testing\DumpFormat\DumpFormatInterface[]|null, register?: bool} $parameters
      */
     public function __construct(array $parameters = [])
     {
@@ -42,7 +42,7 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
     /**
      * {@inheritdoc}
      */
-    public function configure(Application $app)
+    public function configure(Application $app): void
     {
         $app->set(AnalyzerService::class, function (Application $app) {
             return new AnalyzerService(
@@ -80,14 +80,21 @@ class PrimeAnalyzerServiceProvider implements ServiceProviderInterface, Bootable
     /**
      * {@inheritdoc}
      */
-    public function boot(Application $app)
+    public function boot(Application $app): void
     {
         /** @var ServiceLocator $prime */
         $prime = $app->get(ServiceLocator::class);
         /** @var AnalyzerService $service */
         $service = $app->get(AnalyzerService::class);
 
-        foreach ($prime->connections()->allConnectionNames() as $name) {
+        // Legacy : to delete when migrated to prime 1.7
+        /** @var string[] $connectionNames */
+        $connectionNames = method_exists($prime->connections(), 'allConnectionNames')
+            ? $prime->connections()->allConnectionNames()
+            : $prime->connections()->getConnectionNames()
+        ;
+
+        foreach ($connectionNames as $name) {
             $service->configure($prime->connection($name));
         }
 

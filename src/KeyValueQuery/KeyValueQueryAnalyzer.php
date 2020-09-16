@@ -3,6 +3,7 @@
 namespace Bdf\Prime\Analyzer\KeyValueQuery;
 
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
+use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
 use Bdf\Prime\ServiceLocator;
@@ -11,6 +12,7 @@ use Bdf\Prime\ServiceLocator;
  * Analyzer for a key value query
  *
  * @see KeyValueQuery
+ * @extends AbstractRepositoryQueryAnalyzer<KeyValueQuery>
  */
 final class KeyValueQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
 {
@@ -18,7 +20,7 @@ final class KeyValueQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      * KeyValueQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
-     * @param array|null $analyzers
+     * @param RepositoryQueryErrorAnalyzerInterface<KeyValueQuery>[]|null $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
     {
