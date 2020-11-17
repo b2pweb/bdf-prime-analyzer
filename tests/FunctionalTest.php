@@ -95,4 +95,18 @@ class FunctionalTest extends AnalyzerTestCase
 
         $this->assertEmpty($this->service->reports());
     }
+
+    /**
+     *
+     */
+    public function test_with_eval_code()
+    {
+        eval(TestEntity::class."::where('_value', 42)->first();");
+
+        $report = $this->service->reports()[0];
+
+        $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.', 'Use of undeclared attribute "_value".'], $report->errors());
+        $this->assertEquals(1, $report->line());
+        $this->assertEquals("/home/vquatrevieux/workdir/bdf-prime-analyzer/tests/FunctionalTest.php(104) : eval()'d code", $report->file());
+    }
 }

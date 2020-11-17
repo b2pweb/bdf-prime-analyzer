@@ -104,6 +104,10 @@ final class Report implements Hashable
      */
     private function loadIgnored(): void
     {
+        if (!file_exists($this->file)) {
+            return;
+        }
+
         $line = file($this->file)[$this->line - 1];
 
         foreach (IgnoreTagParser::parseLine($line) as $ignored) {
