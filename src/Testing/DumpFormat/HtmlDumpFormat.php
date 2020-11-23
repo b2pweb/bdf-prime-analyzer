@@ -30,6 +30,10 @@ final class HtmlDumpFormat implements DumpFormatInterface
      */
     public function dump(array $reports): void
     {
+        if (!is_dir(dirname($this->filename))) {
+            mkdir(dirname($this->filename), 0777, true);
+        }
+
         $file = fopen($this->filename, 'w');
 
         $date = new \DateTime();
