@@ -6,6 +6,7 @@ use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
+use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Analyzer\Storage\FileReportStorage;
 use Bdf\Prime\Analyzer\Storage\Instant\IncrementInstantFactory;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\DiffDumpFormat;
@@ -106,6 +107,65 @@ class DiffDumpFormatTest extends AnalyzerTestCase
 
         $this->diff->dump($this->service->reports());
         $this->assertEmpty($this->innerFormat->reports);
+    }
+
+    /**
+     *
+     */
+    public function test_dump_with_root_changed()
+    {
+        $this->query1();
+
+        $this->diff->dump($this->service->reports());
+        $this->storage->push($this->instantFactory->next($this->storage), $this->changeRoot($this->service->reports()));
+
+        $this->assertEquals($this->service->reports(), $this->innerFormat->reports);
+
+        $this->query2();
+
+        $this->diff->dump($this->service->reports());
+        $this->storage->push($this->instantFactory->next($this->storage), $this->changeRoot($this->service->reports()));
+
+        $this->assertEquals([$this->service->reports()[1]], $this->innerFormat->reports);
+
+        $this->service->reset();
+        $this->query1();
+        $this->query2();
+
+        $this->diff->dump($this->service->reports());
+        $this->assertEmpty($this->innerFormat->reports);
+    }
+
+    /**
+     * @param Report[] $reports
+     * @throws \ReflectionException
+     */
+    private function changeRoot(array $reports): array
+    {
+        $newReports = [];
+
+        $currentRoot = realpath(__DIR__.'/../../..');
+        $newRoot = '/test/new/root';
+
+        $r = new \ReflectionClass(Report::class);
+        $property = $r->getProperty('stackTrace');
+        $property->setAccessible(true);
+
+        foreach ($reports as $report) {
+            $newReport = clone $report;
+            $stackTrace = $newReport->stackTrace();
+
+            foreach ($stackTrace as &$item) {
+                if (isset($item['file'])) {
+                    $item['file'] = str_replace($currentRoot, $newRoot, $item['file']);
+                }
+            }
+
+            $property->setValue($newReport, $stackTrace);
+            $newReports[] = $newReport;
+        }
+
+        return $newReports;
     }
 
     private function query1()

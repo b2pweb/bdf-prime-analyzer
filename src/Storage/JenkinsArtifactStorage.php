@@ -56,7 +56,7 @@ final class JenkinsArtifactStorage implements ReportStorageInterface
      */
     public function __construct(string $baseUrl, string $project, string $branch, string $file, string $username, string $token)
     {
-        $this->baseUrl = $baseUrl;
+        $this->baseUrl = rtrim($baseUrl, '/'); // Remove tailing /
         $this->project = $project;
         $this->branch = $branch;
         $this->file = $file;
