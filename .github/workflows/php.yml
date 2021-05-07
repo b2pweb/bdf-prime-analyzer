@@ -28,20 +28,12 @@ jobs:
       with:
         php-version: ${{ matrix.php-versions }}
         extensions: json
+        ini-values: date.timezone=Europe/Paris
     - name: Check PHP Version
       run: php -v
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v2
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
 
     - name: Install dependencies
       run: composer install --prefer-dist --no-progress
@@ -50,5 +42,4 @@ jobs:
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     - name: Run test suite
-      run: vendor/bin/phpunit
-    #   run: composer run-script test
+      run: composer run-script tests

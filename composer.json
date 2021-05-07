@@ -33,5 +33,10 @@
     },
     "suggest": {
         "b2p/bdf-web": "For use service provider (~1.8)"
+    },
+    "scripts": {
+        "tests": "phpunit",
+        "tests-with-coverage": "phpunit --coverage-clover coverage.xml",
+        "psalm": "psalm --shepherd"
     }
 }

@@ -107,6 +107,6 @@ class FunctionalTest extends AnalyzerTestCase
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.', 'Use of undeclared attribute "_value".'], $report->errors());
         $this->assertEquals(1, $report->line());
-        $this->assertEquals("/home/vquatrevieux/workdir/bdf-prime-analyzer/tests/FunctionalTest.php(104) : eval()'d code", $report->file());
+        $this->assertEquals(__FILE__."(104) : eval()'d code", $report->file());
     }
 }
