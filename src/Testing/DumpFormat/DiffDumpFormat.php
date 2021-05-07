@@ -66,6 +66,7 @@ final class DiffDumpFormat implements DumpFormatInterface
         if ($oldReports !== null) {
             $this->loadRootPath($oldReports);
 
+            /** @var \Bdf\Collection\CollectionInterface<Report> $current */
             $current = new HashSet([$this, 'hash']);
             $current->addAll($reports);
 

@@ -19,6 +19,7 @@
     <testsuites>
         <testsuite name="All Test Suite">
             <directory suffix="Test.php">tests</directory>
+            <exclude>tests/PrimeAnalyzerServiceProviderTest.php</exclude>
         </testsuite>
     </testsuites>
     <filter>
