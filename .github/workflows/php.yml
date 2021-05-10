@@ -75,7 +75,4 @@ jobs:
       run: composer run-script psalm
 
     - name: Run Infection
-      run: |
-        echo "::add-matcher::.github/infection-problem-matcher.json"
-        ~/.composer/vendor/bin/infection --show-mutations
-        echo "::remove-matcher owner=infection"
+      run: ~/.composer/vendor/bin/infection --logger-github
