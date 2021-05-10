@@ -77,5 +77,5 @@ jobs:
     - name: Run Infection
       run: |
         echo "::add-matcher::.github/infection-problem-matcher.json"
-        ~/.config/composer/vendor/bin/infection --show-mutations
+        ~/.composer/vendor/bin/infection --show-mutations
         echo "::remove-matcher owner=infection"
