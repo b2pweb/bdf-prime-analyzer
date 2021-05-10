@@ -75,4 +75,6 @@ jobs:
       run: composer run-script psalm
 
     - name: Run Infection
-      run: ~/.composer/vendor/bin/infection --logger-github
+      run: |
+        git fetch --depth=1 origin $GITHUB_BASE_REF
+        ~/.composer/vendor/bin/infection --logger-github --git-diff-filter=AM
