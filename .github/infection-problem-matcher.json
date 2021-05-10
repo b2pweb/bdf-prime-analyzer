@@ -2,9 +2,10 @@
   "problemMatcher": [
     {
       "owner": "infection",
+      "severity": "warning",
       "pattern": [
         {
-          "regexp": "^\\d+\\) ([^\\\\s].*):(\\d)+\\s+\\[M\\] (\\w+)$",
+          "regexp": "^\\d+\\) \\/github\\/workspace\\/(.*):(\\d)+\\s+\\[M\\] (\\w+)$",
           "file": 1,
           "line": 2,
           "code": 3,
