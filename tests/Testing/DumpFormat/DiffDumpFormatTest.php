@@ -54,7 +54,7 @@ class DiffDumpFormatTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->directory = '/tmp/test_diff_dump';
+        $this->directory = '/tmp/test_diff_dump_'.bin2hex(random_bytes(12));
         $this->clear();
 
         $this->storage = new FileReportStorage($this->directory);

@@ -1,0 +1,16 @@
+{
+  "problemMatcher": [
+    {
+      "owner": "infection",
+      "pattern": [
+        {
+          "regexp": "^\\d+\\) ([^\\\\s].*):(\\d)+\\s+\\[M\\] (\\w+)$",
+          "file": 1,
+          "line": 2,
+          "code": 3,
+          "message": 3
+        }
+      ]
+    }
+  ]
+}

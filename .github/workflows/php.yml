@@ -58,9 +58,12 @@ jobs:
     - name: Install PHP
       uses: shivammathur/setup-php@v2
       with:
-        php-version: 7.1
+        php-version: 7.2
         extensions: json
         ini-values: date.timezone=Europe/Paris
+
+    - name: Install Infection
+      run: composer global require infection/infection
 
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
@@ -70,3 +73,9 @@ jobs:
 
     - name: Run type coverage
       run: composer run-script psalm
+
+    - name: Run Infection
+      run: |
+        echo "::add-matcher::.github/infection-problem-matcher.json"
+        ~/.config/composer/vendor/bin/infection --show-mutations
+        echo "::remove-matcher owner=infection"
