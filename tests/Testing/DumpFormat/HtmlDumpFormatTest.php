@@ -46,8 +46,8 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
         $this->format->dump([]);
 
         $content = file_get_contents($this->file);
-        $this->assertContains('Prime analyser report', $content);
-        $this->assertContains('No prime reports', $content);
+        $this->assertStringContainsString('Prime analyser report', $content);
+        $this->assertStringContainsString('No prime reports', $content);
     }
 
     /**
@@ -69,12 +69,12 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
         $this->format->dump($service->reports());
 
         $content = file_get_contents($this->file);
-        $this->assertContains('Prime analyser report', $content);
-        $this->assertContains('Prime reports (3) :', $content);
-        $this->assertContains('DumpFormat/HtmlDumpFormatTest.php:63 on AnalyzerTest\TestEntity (called 1 times)', $content);
-        $this->assertContains('Query without index. Consider adding an index, or filter on an indexed field.', $content);
-        $this->assertContains('Use of undeclared attribute "_value".', $content);
-        $this->assertContains('DumpFormat/HtmlDumpFormatTest.php:66 on AnalyzerTest\TestEntity (called 3 times)', $content);
-        $this->assertContains('Suspicious N+1 or loop query', $content);
+        $this->assertStringContainsString('Prime analyser report', $content);
+        $this->assertStringContainsString('Prime reports (3) :', $content);
+        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:63 on AnalyzerTest\TestEntity (called 1 times)', $content);
+        $this->assertStringContainsString('Query without index. Consider adding an index, or filter on an indexed field.', $content);
+        $this->assertStringContainsString('Use of undeclared attribute "_value".', $content);
+        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:66 on AnalyzerTest\TestEntity (called 3 times)', $content);
+        $this->assertStringContainsString('Suspicious N+1 or loop query', $content);
     }
 }
