@@ -98,6 +98,7 @@ HTML
                             $out .= ': ';
 
                             if (isset($trace['class'])) {
+                                /** @psalm-suppress PossiblyUndefinedArrayOffset */
                                 $out .= $trace['class'].$trace['type'];
                             }
 

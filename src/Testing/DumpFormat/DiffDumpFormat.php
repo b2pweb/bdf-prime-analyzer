@@ -125,6 +125,7 @@ final class DiffDumpFormat implements DumpFormatInterface
 
             foreach ($trace as $i => $item) {
                 // Fin a valid class to get a comparison point
+                /** @psalm-suppress RedundantConditionGivenDocblockType */
                 if (isset($item['class']) && class_exists($item['class']) && isset($trace[$i - 1]['file'])) {
                     // Because file and line represent the caller, the called class is on the previous item
                     $reportClassFilename = $trace[$i - 1]['file'];

@@ -21,7 +21,7 @@ final class Report implements Hashable
     private static $primeDirectory;
 
     /**
-     * @var array<int, array<string, string>>
+     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
      */
     private $stackTrace;
 
@@ -41,7 +41,7 @@ final class Report implements Hashable
     private $errors = [];
 
     /**
-     * @var string|null
+     * @var class-string|null
      */
     private $entity;
 
@@ -68,7 +68,7 @@ final class Report implements Hashable
     /**
      * Report constructor.
      *
-     * @param string|null $entity
+     * @param class-string|null $entity
      * @param bool $loadStackTrace
      */
     public function __construct(?string $entity, bool $loadStackTrace = true)
@@ -139,7 +139,7 @@ final class Report implements Hashable
      * Get the calling stack trace for the query execution
      * The return format is the format of debug_backtrace()
      *
-     * @return array<int, array<string, string>>
+     * @return list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
      *
      * @see debug_backtrace()
      */
@@ -191,7 +191,7 @@ final class Report implements Hashable
     /**
      * Get the queried entity
      *
-     * @return string|null
+     * @return class-string|null
      */
     public function entity(): ?string
     {

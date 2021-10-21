@@ -16,7 +16,7 @@ interface AnalyzerInterface
      *
      * @param T $query
      *
-     * @return string|null The entity class, or null if cannot be resolved
+     * @return class-string|null The entity class, or null if cannot be resolved
      */
     public function entity(CompilableClause $query): ?string;
 

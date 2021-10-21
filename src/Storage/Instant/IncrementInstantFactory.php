@@ -2,10 +2,12 @@
 
 namespace Bdf\Prime\Analyzer\Storage\Instant;
 
+use Bdf\Collection\Stream\Accumulator\AccumulatorInterface;
 use Bdf\Collection\Stream\Accumulator\Accumulators;
 use Bdf\Collection\Stream\Streams;
 use Bdf\Collection\Util\Functor\Transformer\Getter;
 use Bdf\Prime\Analyzer\Storage\ReportStorageInterface;
+use http\Encoding\Stream;
 
 /**
  * Factory for IncrementInstant
@@ -27,6 +29,7 @@ final class IncrementInstantFactory implements ReportInstantFactory
      */
     public function next(ReportStorageInterface $storage): ReportInstant
     {
+        /** @psalm-suppress InvalidArgument */
         return new IncrementInstant((int) Streams::wrap($storage->instants($this))->map(new Getter('value'))->reduce(Accumulators::max()) + 1);
     }
 

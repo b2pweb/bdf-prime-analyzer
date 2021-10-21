@@ -152,7 +152,7 @@ class AnalyzerService
     /**
      * Create a report for the current query
      *
-     * @param string|null $entity The related entity
+     * @param class-string|null $entity The related entity
      * @return Report|null
      *
      * @internal
