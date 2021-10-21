@@ -20,7 +20,7 @@ class IncrementInstantTest extends TestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = new IncrementInstantFactory();
     }

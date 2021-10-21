@@ -44,7 +44,7 @@ class StorageDumpFormatTest extends AnalyzerTestCase
      */
     private $service;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class StorageDumpFormatTest extends AnalyzerTestCase
         $this->service->configure($this->prime->connection('test'));
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clear();

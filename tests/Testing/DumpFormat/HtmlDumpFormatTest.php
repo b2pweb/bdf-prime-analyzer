@@ -23,7 +23,7 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
      */
     private $format;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -31,7 +31,7 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
         $this->format = new HtmlDumpFormat($this->file);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         parent::tearDown();
 

@@ -20,7 +20,7 @@ class TimeInstantTest extends TestCase
     /**
      *
      */
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->factory = new TimeInstantFactory();
     }

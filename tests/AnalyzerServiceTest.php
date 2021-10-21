@@ -27,7 +27,7 @@ class AnalyzerServiceTest extends AnalyzerTestCase
      */
     private $service;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         if (!self::$reportDumper) {
             self::$reportDumper = new AnalyzerReportDumper();
@@ -35,7 +35,7 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         }
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,7 +46,7 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$reportDumper->push($this->service->reports());
         parent::tearDown();
