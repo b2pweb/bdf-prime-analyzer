@@ -20,7 +20,7 @@ final class RecursiveClauseIterator extends ArrayIterator implements RecursiveIt
     /**
      * {@inheritdoc}
      */
-    public function hasChildren()
+    public function hasChildren(): bool
     {
         return !empty($this->current()['nested']);
     }
@@ -28,7 +28,7 @@ final class RecursiveClauseIterator extends ArrayIterator implements RecursiveIt
     /**
      * {@inheritdoc}
      */
-    public function getChildren()
+    public function getChildren(): RecursiveClauseIterator
     {
         return new static($this->current()['nested']);
     }

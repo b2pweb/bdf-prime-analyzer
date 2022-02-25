@@ -56,6 +56,9 @@ class TimeInstantTest extends TestCase
         $storage = $this->createMock(ReportStorageInterface::class);
         $storage->expects($this->never())->method('instants');
 
-        $this->assertEqualsWithDelta(new TimeInstant(new \DateTime()), $this->factory->next($storage), 0.1);
+        $instant = $this->factory->next($storage);
+
+        $this->assertInstanceOf(TimeInstant::class, $instant);
+        $this->assertEqualsWithDelta(new \DateTime(), new \DateTime($instant->value()), 1);
     }
 }
