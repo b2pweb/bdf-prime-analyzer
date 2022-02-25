@@ -14,7 +14,7 @@ use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 class AnalyzerService
 {
     /**
-     * @var array<class-string, AnalyzerInterface>
+     * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
      */
     private $analyzerByQuery;
 
@@ -37,7 +37,7 @@ class AnalyzerService
     /**
      * AnalyzerService constructor.
      *
-     * @param array<class-string, AnalyzerInterface> $analyzerByQuery
+     * @param array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface> $analyzerByQuery
      * @param string[] $ignoredPath
      * @param string[] $ignoredAnalysis
      */
@@ -69,6 +69,7 @@ class AnalyzerService
                 continue;
             }
 
+            /** @psalm-suppress InvalidArgument */
             $factory->register($query, new AnalyzerCompilerAdapter($this, $compiler, $analyzer));
         }
     }

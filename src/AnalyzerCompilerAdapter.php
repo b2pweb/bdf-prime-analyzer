@@ -8,6 +8,9 @@ use Bdf\Prime\Query\Compiler\CompilerInterface;
 
 /**
  * Adapt for CompilerInterface for perform query analysis
+ *
+ * @template Q as CompilableClause&\Bdf\Prime\Query\Contract\Compilable
+ * @implements CompilerInterface<Q>
  */
 final class AnalyzerCompilerAdapter implements CompilerInterface
 {
@@ -17,7 +20,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
     private $service;
 
     /**
-     * @var CompilerInterface
+     * @var CompilerInterface<Q>
      */
     private $compiler;
 
@@ -30,7 +33,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      * AnalyzerCompilerAdapter constructor.
      *
      * @param AnalyzerService $service
-     * @param CompilerInterface $compiler
+     * @param CompilerInterface<Q> $compiler
      * @param AnalyzerInterface $analyzer
      */
     public function __construct(AnalyzerService $service, CompilerInterface $compiler, AnalyzerInterface $analyzer)
@@ -98,8 +101,6 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
 
     /**
      * {@inheritdoc}
-     *
-     * @return mixed
      */
     public function getBindings(CompilableClause $query): array
     {
