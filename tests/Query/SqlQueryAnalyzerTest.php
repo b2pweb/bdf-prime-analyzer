@@ -250,7 +250,7 @@ class TestEntityWithIgnore extends TestEntity
  */
 class TestEntityWithIgnoreMapper extends TestEntityMapper
 {
-    public function schema()
+    public function schema(): array
     {
         return ['table' => 'with_ignore'] + parent::schema();
     }

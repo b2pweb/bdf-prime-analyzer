@@ -101,7 +101,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      *
      * @return mixed
      */
-    public function getBindings(CompilableClause $query)
+    public function getBindings(CompilableClause $query): array
     {
         return $this->compiler->getBindings($query);
     }

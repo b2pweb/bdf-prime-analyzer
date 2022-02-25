@@ -8,7 +8,7 @@ use Bdf\Prime\Mapper\Mapper;
 
 class TestEntityMapper extends Mapper
 {
-    public function schema()
+    public function schema(): array
     {
         return [
             'connection' => 'test',
@@ -16,7 +16,7 @@ class TestEntityMapper extends Mapper
         ];
     }
 
-    public function buildFields($builder)
+    public function buildFields($builder): void
     {
         $builder
             ->bigint('id')->autoincrement()
@@ -28,12 +28,12 @@ class TestEntityMapper extends Mapper
         ;
     }
 
-    public function buildIndexes(IndexBuilder $builder)
+    public function buildIndexes(IndexBuilder $builder): void
     {
         $builder->add()->on('key');
     }
 
-    public function buildRelations($builder)
+    public function buildRelations($builder): void
     {
         $builder
             ->on('relationEntity')

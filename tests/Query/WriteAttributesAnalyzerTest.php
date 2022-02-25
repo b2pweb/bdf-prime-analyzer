@@ -105,12 +105,12 @@ class EntityWithTypes extends Model
 
 class EntityWithTypesMapper extends Mapper
 {
-    public function schema()
+    public function schema(): array
     {
         return [];
     }
 
-    public function buildFields($builder)
+    public function buildFields($builder): void
     {
         $builder
             ->boolean('bool')

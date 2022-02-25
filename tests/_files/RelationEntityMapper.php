@@ -13,7 +13,7 @@ class RelationEntityMapper extends Mapper
     /**
      * @return array|void|null
      */
-    public function schema()
+    public function schema(): array
     {
         return [
             'connection' => 'test',
@@ -21,7 +21,7 @@ class RelationEntityMapper extends Mapper
         ];
     }
 
-    public function buildFields($builder)
+    public function buildFields($builder): void
     {
         $builder
             ->string('key')->primary()
