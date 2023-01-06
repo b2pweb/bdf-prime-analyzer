@@ -37,7 +37,7 @@
     "scripts": {
         "tests": "phpunit",
         "tests-with-coverage": "phpunit --coverage-clover coverage.xml",
-        "psalm": "psalm --shepherd"
+        "psalm": "psalm --shepherd --php-version=7.4"
     },
     "extra": {
         "branch-alias": {
