@@ -161,8 +161,6 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
      */
     public function test_query_with_ignore_by_mapper_method()
     {
-        TestEntity::repository()->mapper()->primeAnalyzerParameters['not_declared'] = false;
-
         TestEntityWithIgnore::repository()->builder()
             ->where('_value', 42)
             ->execute()
@@ -171,7 +169,6 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $report->errors());
-        TestEntity::repository()->mapper()->primeAnalyzerParameters = [];
     }
 
     /**

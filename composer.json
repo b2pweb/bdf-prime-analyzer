@@ -22,9 +22,9 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "~7.1 || ~8.0.0 || ~8.1.0",
+        "php": "~7.1 || ~8.0.0 || ~8.1.0 || ~8.2.0",
         "ext-json": "*",
-        "b2pweb/bdf-prime": "~1.0|~2.0",
+        "b2pweb/bdf-prime": "~1.0|^2.0.5",
         "b2pweb/bdf-collections": "~1.1.2"
     },
     "require-dev": {

@@ -2,9 +2,16 @@
 
 namespace Bdf\Prime\Analyzer;
 
+use BadMethodCallException;
+use Bdf\Prime\Exception\PrimeException;
 use Bdf\Prime\Platform\PlatformInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Compiler\CompilerInterface;
+use Bdf\Prime\Query\Compiler\DeleteCompilerInterface;
+use Bdf\Prime\Query\Compiler\InsertCompilerInterface;
+use Bdf\Prime\Query\Compiler\QuoteCompilerInterface;
+use Bdf\Prime\Query\Compiler\SelectCompilerInterface;
+use Bdf\Prime\Query\Compiler\UpdateCompilerInterface;
 
 /**
  * Adapt for CompilerInterface for perform query analysis
@@ -12,7 +19,7 @@ use Bdf\Prime\Query\Compiler\CompilerInterface;
  * @template Q as CompilableClause&\Bdf\Prime\Query\Contract\Compilable
  * @implements CompilerInterface<Q>
  */
-final class AnalyzerCompilerAdapter implements CompilerInterface
+final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerInterface
 {
     /**
      * @var AnalyzerService
@@ -20,7 +27,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
     private $service;
 
     /**
-     * @var CompilerInterface<Q>
+     * @var object
      */
     private $compiler;
 
@@ -33,10 +40,10 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      * AnalyzerCompilerAdapter constructor.
      *
      * @param AnalyzerService $service
-     * @param CompilerInterface<Q> $compiler
+     * @param object $compiler
      * @param AnalyzerInterface $analyzer
      */
-    public function __construct(AnalyzerService $service, CompilerInterface $compiler, AnalyzerInterface $analyzer)
+    public function __construct(AnalyzerService $service, $compiler, AnalyzerInterface $analyzer)
     {
         $this->service = $service;
         $this->compiler = $compiler;
@@ -48,6 +55,12 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileInsert(CompilableClause $query)
     {
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof InsertCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
         $this->analyze($query);
 
         return $this->compiler->compileInsert($query);
@@ -58,6 +71,12 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileUpdate(CompilableClause $query)
     {
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof UpdateCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
         $this->analyze($query);
 
         return $this->compiler->compileUpdate($query);
@@ -68,6 +87,12 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileDelete(CompilableClause $query)
     {
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof DeleteCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
         $this->analyze($query);
 
         return $this->compiler->compileDelete($query);
@@ -78,6 +103,12 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function compileSelect(CompilableClause $query)
     {
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof SelectCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
         $this->analyze($query);
 
         return $this->compiler->compileSelect($query);
@@ -96,7 +127,27 @@ final class AnalyzerCompilerAdapter implements CompilerInterface
      */
     public function quoteIdentifier(CompilableClause $query, $column): string
     {
-        return $this->compiler->quoteIdentifier($query, $column);
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof QuoteCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
+        return $compiler->quoteIdentifier($query, $column);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function quote($value)
+    {
+        $compiler = $this->compiler;
+
+        if (!$compiler instanceof QuoteCompilerInterface) {
+            throw new BadMethodCallException();
+        }
+
+        return $compiler->quote($value);
     }
 
     /**

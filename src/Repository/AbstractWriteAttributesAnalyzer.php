@@ -62,7 +62,7 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      * @param Metadata $metadata
      * @param array $values
      *
-     * @return StreamInterface<non-empty-string, mixed>
+     * @return StreamInterface<non-falsy-string, mixed>
      */
     private function analyseUndeclared(Metadata $metadata, array $values): StreamInterface
     {
@@ -79,7 +79,7 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      * @param Metadata $metadata
      * @param array<string, mixed> $values
      *
-     * @return StreamInterface<non-empty-string, mixed>
+     * @return StreamInterface<non-falsy-string, mixed>
      */
     private function analyseType(Metadata $metadata, array $values): StreamInterface
     {
