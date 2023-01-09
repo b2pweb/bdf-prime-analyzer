@@ -87,7 +87,7 @@ class WriteAttributesAnalyzerTest extends AnalyzerTestCase
         $this->assertEquals(['Bad value "invalid" for "array".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::builder()->values(['array' => 'invalid'])));
         $this->assertEquals(['Bad value "-300" for "tinyint".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::builder()->values(['tinyint' => -300])));
         $this->assertEquals(['Bad value "1000000" for "smallint".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::builder()->values(['smallint' => 1000000])));
-        $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::builder()->values(['array' => [[]]]))[0]);
+        $this->assertMatchesRegularExpression('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::builder()->values(['array' => [[]]]))[0]);
     }
 }
 

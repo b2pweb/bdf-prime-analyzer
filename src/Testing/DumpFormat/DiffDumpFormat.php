@@ -13,46 +13,33 @@ use Bdf\Prime\Analyzer\Storage\ReportStorageInterface;
 final class DiffDumpFormat implements DumpFormatInterface
 {
     /**
-     * @var ReportStorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var ReportInstantFactory
-     */
-    private $instantFactory;
-
-    /**
-     * @var DumpFormatInterface[]
-     */
-    private $formats;
-
-    /**
      * The last report root path
-     *
-     * @var string|null
      */
-    private $lastRootPath;
+    private ?string $lastRootPath = null;
 
     /**
      * The current root path
-     *
-     * @var string|null
      */
-    private $currentRootPath;
+    private ?string $currentRootPath = null;
 
-    /**
-     * DiffDumpFormat constructor.
-     *
-     * @param ReportStorageInterface $storage The report storage
-     * @param ReportInstantFactory $instantFactory The instant system
-     * @param DumpFormatInterface[] $formats The diff dump format
-     */
-    public function __construct(ReportStorageInterface $storage, ReportInstantFactory $instantFactory, array $formats)
-    {
-        $this->storage = $storage;
-        $this->instantFactory = $instantFactory;
-        $this->formats = $formats;
+    public function __construct(
+        /**
+         * The report storage which contains the previous report
+         */
+        private ReportStorageInterface $storage,
+
+        /**
+         * The instant system
+         */
+        private ReportInstantFactory $instantFactory,
+
+        /**
+         * Actual dump format, called only on new reports
+         *
+         * @var DumpFormatInterface[]
+         */
+        private array $formats,
+    ) {
     }
 
     /**

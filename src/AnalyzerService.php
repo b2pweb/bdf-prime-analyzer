@@ -8,44 +8,44 @@ use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 
+use function get_class;
+use function str_starts_with;
+
 /**
  * Class AnalyzerService
  */
 class AnalyzerService
 {
     /**
-     * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
+     * Store all generated reports.
      */
-    private $analyzerByQuery;
+    private SetInterface $reports;
 
-    /**
-     * @var string[]
-     */
-    private $ignoredPath;
+    public function __construct(
+        /**
+         * Map a query class name to the corresponding analyzer
+         *
+         * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
+         */
+        private array $analyzerByQuery,
 
-    /**
-     * @var string[]
-     */
-    private $ignoredAnalysis;
+        /**
+         * Paths to ignore
+         * This path must be relative to the project root
+         *
+         * @var string[]
+         */
+        private array $ignoredPath = [],
 
-    /**
-     * @var SetInterface
-     */
-    private $reports;
-
-
-    /**
-     * AnalyzerService constructor.
-     *
-     * @param array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface> $analyzerByQuery
-     * @param string[] $ignoredPath
-     * @param string[] $ignoredAnalysis
-     */
-    public function __construct(array $analyzerByQuery, array $ignoredPath = [], array $ignoredAnalysis = [])
-    {
-        $this->analyzerByQuery = $analyzerByQuery;
-        $this->ignoredPath = $ignoredPath;
-        $this->ignoredAnalysis = $ignoredAnalysis;
+        /**
+         * List of analysis to ignore
+         *
+         * @var string[]
+         *
+         * @see AnalysisTypes
+         */
+        private array $ignoredAnalysis = [],
+    ) {
         $this->reports = new HashSet();
     }
 
@@ -105,13 +105,12 @@ class AnalyzerService
      */
     public function analyze(CompilableClause $query): ?Report
     {
-        $type = get_class($query);
+        $analyzer = $this->analyzerByQuery[get_class($query)] ?? null;
 
-        if (!isset($this->analyzerByQuery[$type])) {
+        if (!$analyzer) {
             return null;
         }
 
-        $analyzer = $this->analyzerByQuery[$type];
         $report = new Report($analyzer->entity($query), false);
 
         $analyzer->analyze($report, $query);
@@ -169,7 +168,7 @@ class AnalyzerService
 
         foreach ($this->ignoredPath as $path) {
             // The path is ignored
-            if (strpos($report->file(), $path) === 0) {
+            if (str_starts_with($report->file(), $path)) {
                 return null;
             }
         }

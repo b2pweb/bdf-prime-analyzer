@@ -154,6 +154,10 @@ class AnalyzerServiceTest extends AnalyzerTestCase
 
         $report = $r->newInstanceWithoutConstructor();
 
+        $rentity = $r->getProperty('entity');
+        $rentity->setAccessible(true);
+        $rentity->setValue($report, null);
+
         $rfile = $r->getProperty('file');
         $rfile->setAccessible(true);
         $rfile->setValue($report, $file);

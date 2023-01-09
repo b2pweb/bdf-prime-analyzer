@@ -80,7 +80,7 @@ class InsertValuesAnalyzerTest extends AnalyzerTestCase
         $this->assertEquals(['Bad value "invalid" for "array".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => 'invalid'])));
         $this->assertEquals(['Bad value "-300" for "tinyint".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['tinyint' => -300])));
         $this->assertEquals(['Bad value "1000000" for "smallint".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['smallint' => 1000000])));
-        $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => [[]]]))[0]);
+        $this->assertMatchesRegularExpression('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => [[]]]))[0]);
     }
 
     /**

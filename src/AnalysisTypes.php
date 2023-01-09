@@ -7,15 +7,15 @@ namespace Bdf\Prime\Analyzer;
  */
 final class AnalysisTypes
 {
-    const LIKE = 'like';
-    const INDEX = 'index';
-    const NOT_DECLARED = 'not_declared';
-    const SORT = 'sort';
-    const OR = 'or';
-    const OPTIMISATION = 'optimisation';
-    const RELATION_DISTANT_KEY = 'relation_distant_key';
-    const WRITE = 'write';
-    const N_PLUS_1 = 'n+1';
+    public const LIKE = 'like';
+    public const INDEX = 'index';
+    public const NOT_DECLARED = 'not_declared';
+    public const SORT = 'sort';
+    public const OR = 'or';
+    public const OPTIMISATION = 'optimisation';
+    public const RELATION_DISTANT_KEY = 'relation_distant_key';
+    public const WRITE = 'write';
+    public const N_PLUS_1 = 'n+1';
 
     /**
      * Get all the optimisation analysis types

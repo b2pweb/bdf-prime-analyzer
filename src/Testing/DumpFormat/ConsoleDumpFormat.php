@@ -2,6 +2,10 @@
 
 namespace Bdf\Prime\Analyzer\Testing\DumpFormat;
 
+use function count;
+use function function_exists;
+use function posix_isatty;
+
 /**
  * Dump the report in the console
  */

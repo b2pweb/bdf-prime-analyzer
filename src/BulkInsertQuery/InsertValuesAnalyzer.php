@@ -24,8 +24,7 @@ final class InsertValuesAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
 
         foreach ($query->statements['values'] as $values) {
             $analyzer = new class($values) extends AbstractWriteAttributesAnalyzer {
-                private $values;
-                public function __construct(array $values) { $this->values = $values; }
+                public function __construct(private array $values) {}
                 protected function values(CompilableClause $query): array { return $this->values; }
             };
 

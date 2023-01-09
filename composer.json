@@ -22,21 +22,18 @@
     },
     "minimum-stability": "dev",
     "require": {
-        "php": "~7.1 || ~8.0.0 || ~8.1.0 || ~8.2.0",
+        "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
         "ext-json": "*",
-        "b2pweb/bdf-prime": "~1.0|^2.0.5",
+        "b2pweb/bdf-prime": "^2.0.5",
         "b2pweb/bdf-collections": "~1.1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "~7.0|~8.0",
+        "phpunit/phpunit": "~9.0",
         "vimeo/psalm": "~4.7"
-    },
-    "suggest": {
-        "b2p/bdf-web": "For use service provider (~1.8)"
     },
     "scripts": {
         "tests": "phpunit",
         "tests-with-coverage": "phpunit --coverage-clover coverage.xml",
-        "psalm": "psalm --shepherd --php-version=7.4"
+        "psalm": "psalm --shepherd --php-version=8.0"
     }
 }

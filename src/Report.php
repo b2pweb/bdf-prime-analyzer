@@ -10,6 +10,9 @@ use Bdf\Prime\Relations\RelationInterface;
 use Bdf\Prime\ServiceLocator;
 use LogicException;
 
+use function array_slice;
+use function debug_backtrace;
+
 /**
  * Store a query analysis report
  */
@@ -21,49 +24,26 @@ final class Report implements Hashable
     private static $primeDirectory;
 
     /**
-     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
-     */
-    private $stackTrace;
-
-    /**
-     * @var string
-     */
-    private $file;
-
-    /**
-     * @var int
-     */
-    private $line;
-
-    /**
-     * @var string[]
-     */
-    private $errors = [];
-
-    /**
      * @var class-string|null
      */
-    private $entity;
+    private ?string $entity;
 
     /**
-     * @var int
+     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
      */
-    private $calls = 1;
+    private array $stackTrace;
 
-    /**
-     * @var bool
-     */
-    private $loadQuery = false;
-
-    /**
-     * @var bool
-     */
-    private $postProcess = false;
+    private string $file;
+    private int $line;
+    private array $errors = [];
+    private int $calls = 1;
+    private bool $loadQuery = false;
+    private bool $postProcess = false;
 
     /**
      * @var array<string, bool>
      */
-    private $ignored = [];
+    private array $ignored = [];
 
     /**
      * Report constructor.
@@ -223,7 +203,7 @@ final class Report implements Hashable
     /**
      * {@inheritdoc}
      */
-    public function hash()
+    public function hash(): string
     {
         return json_encode([$this->entity, $this->stackTrace]);
     }

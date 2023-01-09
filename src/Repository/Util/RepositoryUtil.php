@@ -11,23 +11,11 @@ use Bdf\Prime\Repository\RepositoryInterface;
  */
 class RepositoryUtil
 {
-    /**
-     * @var RepositoryInterface
-     */
-    private $repository;
+    private Metadata $metadata;
 
-    /**
-     * @var Metadata
-     */
-    private $metadata;
-
-    /**
-     * RepositoryUtil constructor.
-     * @param RepositoryInterface $repository
-     */
-    public function __construct(RepositoryInterface $repository)
-    {
-        $this->repository = $repository;
+    public function __construct(
+        private RepositoryInterface $repository,
+    ) {
         $this->metadata = $repository->metadata();
     }
 

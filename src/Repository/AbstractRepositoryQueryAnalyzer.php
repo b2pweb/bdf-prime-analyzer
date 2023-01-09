@@ -20,19 +20,9 @@ use Bdf\Prime\ServiceLocator;
 abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
 {
     /**
-     * @var ServiceLocator
-     */
-    private $serviceLocator;
-
-    /**
-     * @var RepositoryQueryErrorAnalyzerInterface<T>[]
-     */
-    private $analyzers;
-
-    /**
      * @var array<string, array<string, string[]|false>>
      */
-    private $analyzersParameters = [];
+    private array $analyzersParameters = [];
 
     /**
      * SqlQueryAnalyzer constructor.
@@ -40,10 +30,16 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      * @param ServiceLocator $serviceLocator
      * @param RepositoryQueryErrorAnalyzerInterface<T>[] $analyzers
      */
-    public function __construct(ServiceLocator $serviceLocator, array $analyzers = [])
-    {
-        $this->serviceLocator = $serviceLocator;
-        $this->analyzers = $analyzers;
+    public function __construct(
+        private ServiceLocator $serviceLocator,
+
+        /**
+         * List of analyzers to apply
+         *
+         * @var array<RepositoryQueryErrorAnalyzerInterface<T>>
+         */
+        private array $analyzers = []
+    ) {
     }
 
     /**
