@@ -1,7 +1,7 @@
 # Prime Analyzer
 [![build](https://github.com/b2pweb/bdf-prime-analyzer/actions/workflows/php.yml/badge.svg)](https://github.com/b2pweb/bdf-prime-analyzer/actions/workflows/php.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/quality-score.png?b=1.0)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=1.0)
+[![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/coverage.png?b=1.0)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=1.0)
 [![Packagist Version](https://img.shields.io/packagist/v/b2pweb/bdf-prime-analyzer.svg)](https://packagist.org/packages/b2pweb/bdf-prime-analyzer)
 [![Total Downloads](https://img.shields.io/packagist/dt/b2pweb/bdf-prime-analyzer.svg)](https://packagist.org/packages/b2pweb/bdf-prime-analyzer)
 [![Type Coverage](https://shepherd.dev/github/b2pweb/bdf-prime-analyzer/coverage.svg)](https://shepherd.dev/github/b2pweb/bdf-prime-analyzer)
@@ -65,7 +65,7 @@ class TourOperationMapper extends Mapper
 
 Available options to set on the service provider registration :
 
-- **ignoredPath** : List of path to ignore on the query analysis. For exemple the tests directory.
+- **ignoredPath** : List of path to ignore on the query analysis. For example the tests directory.
 - **ignoredAnalysis** : List of analysis to ignore. See AnalysisTypes. AnalysisTypes::optimisations() can be used to only report dangerous queries.
 - **dumpFormats** :  List of DumpFormatInterface instances. 
     * ConsoleDumpFormat : for dump in console after the end of tests

@@ -38,10 +38,5 @@
         "tests": "phpunit",
         "tests-with-coverage": "phpunit --coverage-clover coverage.xml",
         "psalm": "psalm --shepherd --php-version=7.4"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0-dev"
-        }
     }
 }
