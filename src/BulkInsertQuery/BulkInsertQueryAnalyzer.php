@@ -20,7 +20,7 @@ final class BulkInsertQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      * BulkInsertQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
-     * @param RepositoryQueryErrorAnalyzerInterface<BulkInsertQuery>[]|null $analyzers
+     * @param array<RepositoryQueryErrorAnalyzerInterface<BulkInsertQuery>>|null $analyzers
      */
     public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
     {

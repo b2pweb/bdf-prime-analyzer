@@ -24,12 +24,6 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
      */
     private array $analyzersParameters = [];
 
-    /**
-     * SqlQueryAnalyzer constructor.
-     *
-     * @param ServiceLocator $serviceLocator
-     * @param RepositoryQueryErrorAnalyzerInterface<T>[] $analyzers
-     */
     public function __construct(
         private ServiceLocator $serviceLocator,
 

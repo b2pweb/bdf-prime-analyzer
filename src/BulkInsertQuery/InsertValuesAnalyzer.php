@@ -23,6 +23,7 @@ final class InsertValuesAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
         $errors = [];
 
         foreach ($query->statements['values'] as $values) {
+            /** @psalm-suppress MissingTemplateParam */
             $analyzer = new class($values) extends AbstractWriteAttributesAnalyzer {
                 public function __construct(private array $values) {}
                 protected function values(CompilableClause $query): array { return $this->values; }

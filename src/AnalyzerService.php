@@ -99,7 +99,7 @@ class AnalyzerService
      * Perform analysis on a query
      * Note: the result will not be push()ed into the service
      *
-     * @param CompilableClause $query
+     * @param \Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface $query
      *
      * @return Report|null
      */

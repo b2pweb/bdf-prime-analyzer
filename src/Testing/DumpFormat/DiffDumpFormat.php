@@ -6,6 +6,14 @@ use Bdf\Collection\HashSet;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Analyzer\Storage\Instant\ReportInstantFactory;
 use Bdf\Prime\Analyzer\Storage\ReportStorageInterface;
+use ReflectionClass;
+
+use function class_exists;
+use function json_encode;
+use function realpath;
+use function str_replace;
+use function strlen;
+use function substr;
 
 /**
  * Dump only new queries on error
@@ -113,11 +121,11 @@ final class DiffDumpFormat implements DumpFormatInterface
             foreach ($trace as $i => $item) {
                 // Fin a valid class to get a comparison point
                 /** @psalm-suppress RedundantConditionGivenDocblockType */
-                if (isset($item['class']) && class_exists($item['class']) && isset($trace[$i - 1]['file'])) {
+                if ($i > 0 && isset($item['class']) && class_exists($item['class']) && isset($trace[$i - 1]['file'])) {
                     // Because file and line represent the caller, the called class is on the previous item
                     $reportClassFilename = $trace[$i - 1]['file'];
                     // Get file name of the corresponding class on the current runtime
-                    $currentClassFilename = realpath((new \ReflectionClass($item['class']))->getFileName());
+                    $currentClassFilename = realpath((new ReflectionClass($item['class']))->getFileName());
 
                     // Find size of the suffix (i.e. relative file path)
                     for ($suffixLen = 1; $suffixLen < strlen($currentClassFilename); ++$suffixLen) {

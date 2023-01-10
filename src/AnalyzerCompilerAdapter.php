@@ -17,6 +17,7 @@ use Bdf\Prime\Query\Compiler\UpdateCompilerInterface;
  *
  * @template Q as CompilableClause&\Bdf\Prime\Query\Contract\Compilable
  * @implements CompilerInterface<Q>
+ * @implements QuoteCompilerInterface<Q>
  */
 final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerInterface
 {
