@@ -62,6 +62,7 @@ class PrimeAnalyzerBundle extends Bundle
         /** @var AnalyzerService $service */
         $service = $this->container->get(AnalyzerService::class);
 
+        /** @psalm-suppress PossiblyNullReference */
         $this->container->get(AnalyzerReportDumper::class)->push($service->reports());
         $service->reset();
     }

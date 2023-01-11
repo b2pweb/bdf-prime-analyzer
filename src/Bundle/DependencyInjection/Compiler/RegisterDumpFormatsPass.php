@@ -7,6 +7,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * Register dump formats tagged with "prime_analyzer.dump_format" into {@see AnalyzerReportDumper} constructor
+ */
 class RegisterDumpFormatsPass implements CompilerPassInterface
 {
     const TAG = 'prime_analyzer.dump_format';
@@ -14,7 +17,7 @@ class RegisterDumpFormatsPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $formats = [];
 

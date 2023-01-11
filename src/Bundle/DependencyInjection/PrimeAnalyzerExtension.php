@@ -9,6 +9,7 @@ use Bdf\Prime\Analyzer\Testing\DumpFormat\ConsoleDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\DiffDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\HtmlDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\StorageDumpFormat;
+use InvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -21,8 +22,9 @@ class PrimeAnalyzerExtension extends Extension
     /**
      * {@inheritdoc}
      */
-    public function load(array $configs, ContainerBuilder $container)
+    public function load(array $configs, ContainerBuilder $container): void
     {
+        /** @var Configuration $configuration */
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
@@ -33,11 +35,10 @@ class PrimeAnalyzerExtension extends Extension
         $container->setParameter('prime_analyzer.ignored_analysis', (array) $config['ignored_analysis']);
         $container->setParameter('prime_analyzer.ignored_paths', (array) $config['ignored_paths']);
 
-        // @todo dumper
         $this->configureDumpFormats($config['dump_formats'], $container);
     }
 
-    private function configureDumpFormats(array $config, ContainerBuilder $container)
+    private function configureDumpFormats(array $config, ContainerBuilder $container): void
     {
         foreach ($config as $key => $format) {
             $this->configureSingleDumpFormat('prime_analyzer.dump_formats.' . $key, $format, $container)
@@ -82,6 +83,10 @@ class PrimeAnalyzerExtension extends Extension
                 break;
 
             case 'storage':
+                if (!$format['storage']) {
+                    throw new InvalidArgumentException('Missing storage configuration for dump format.');
+                }
+
                 $container->setDefinition($baseContainerId . '.storage', $this->createStorage($format['storage']));
                 $definition = $container
                     ->register($definitionId, StorageDumpFormat::class)
@@ -91,11 +96,15 @@ class PrimeAnalyzerExtension extends Extension
                 break;
 
             default:
-                throw new \InvalidArgumentException('Invalid dump format type: ' . $type);
+                throw new InvalidArgumentException('Invalid dump format type: ' . $type);
         }
 
         if (!$format['diff']) {
             return $definition;
+        }
+
+        if (!$format['storage']) {
+            throw new InvalidArgumentException('Missing storage configuration for dump format.');
         }
 
         $container->setDefinition($baseContainerId . '.storage', $this->createStorage($format['storage']));
@@ -122,7 +131,7 @@ class PrimeAnalyzerExtension extends Extension
                 return new Definition(FileReportStorage::class, [$dsn->getPath()]);
 
             default:
-                throw new \InvalidArgumentException('Unknown storage type: ' . $dsn->getScheme());
+                throw new InvalidArgumentException('Unknown storage type: ' . $dsn->getScheme());
         }
     }
 }

@@ -6,6 +6,9 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * @psalm-suppress PossiblyUndefinedMethod
+ */
 final class Configuration implements ConfigurationInterface
 {
     /**
@@ -38,9 +41,7 @@ final class Configuration implements ConfigurationInterface
             ->arrayPrototype()
             ->beforeNormalization()
             ->ifString()
-            ->then(static function ($v) {
-                return ['type' => $v];
-            })
+            ->then(static fn(string $v) => ['type' => $v])
             ->end()
         ;
 

@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- *
+ * Register analyzers tagged with "prime_analyzer.analyzer" into {@see AnalyzerService} constructor
  */
 final class RegisterAnalyzersPass implements CompilerPassInterface
 {
@@ -17,7 +17,7 @@ final class RegisterAnalyzersPass implements CompilerPassInterface
     /**
      * {@inheritdoc}
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $analyzers = [];
 
