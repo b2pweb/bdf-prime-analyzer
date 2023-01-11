@@ -167,8 +167,11 @@ class AnalyzerService
         }
 
         foreach ($this->ignoredPath as $path) {
+            $reportPath = realpath($report->file());
+            $ignoredPath = realpath($path);
+
             // The path is ignored
-            if (str_starts_with($report->file(), $path)) {
+            if ($reportPath && $ignoredPath && str_starts_with($reportPath, $ignoredPath)) {
                 return null;
             }
         }

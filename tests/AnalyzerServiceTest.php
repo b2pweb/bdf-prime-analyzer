@@ -10,7 +10,6 @@ use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Compiler\Preprocessor\PreprocessorInterface;
 use Bdf\Prime\Query\Query;
-use Bdf\Prime\Repository\EntityRepository;
 
 /**
  * Class AnalyzerServiceTest

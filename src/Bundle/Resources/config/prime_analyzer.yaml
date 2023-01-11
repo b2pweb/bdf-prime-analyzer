@@ -1,0 +1,56 @@
+parameters:
+  prime_analyzer.enabled: true
+  prime_analyzer.ignored_paths: []
+  prime_analyzer.ignored_analysis: []
+
+services:
+  Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer:
+    class: Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer
+    arguments:
+      - '@prime'
+    tags:
+      - name: 'prime_analyzer.query_analyzer'
+        query: Bdf\Prime\Query\Query
+
+  Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer:
+    class: Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer
+    arguments:
+      - '@prime'
+    tags:
+      - name: 'prime_analyzer.query_analyzer'
+        query: Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery
+
+  Bdf\Prime\Analyzer\BulkInsertQuery\BulkInsertQueryAnalyzer:
+    class: Bdf\Prime\Analyzer\BulkInsertQuery\BulkInsertQueryAnalyzer
+    arguments:
+      - '@prime'
+    tags:
+      - name: 'prime_analyzer.query_analyzer'
+        query: Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery
+
+  Bdf\Prime\Analyzer\AnalyzerService:
+    class: Bdf\Prime\Analyzer\AnalyzerService
+    public: true
+    arguments:
+      - []
+      - '%prime_analyzer.ignored_paths%'
+      - '%prime_analyzer.ignored_analysis%'
+
+  Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper:
+    class: Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper
+    public: true
+    arguments:
+      - null
+
+  Bdf\Prime\Analyzer\Storage\Instant\DummyInstantFactory:
+    class: Bdf\Prime\Analyzer\Storage\Instant\DummyInstantFactory
+
+  Bdf\Prime\Analyzer\Storage\Instant\IncrementInstantFactory:
+    class: Bdf\Prime\Analyzer\Storage\Instant\IncrementInstantFactory
+
+  Bdf\Prime\Analyzer\Storage\Instant\TimeInstantFactory:
+    class: Bdf\Prime\Analyzer\Storage\Instant\TimeInstantFactory
+
+  prime_analyzer.instant_factory.dummy: '@Bdf\Prime\Analyzer\Storage\Instant\DummyInstantFactory'
+  prime_analyzer.instant_factory.increment: '@Bdf\Prime\Analyzer\Storage\Instant\IncrementInstantFactory'
+  prime_analyzer.instant_factory.time: '@Bdf\Prime\Analyzer\Storage\Instant\TimeInstantFactory'

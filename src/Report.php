@@ -9,9 +9,12 @@ use Bdf\Prime\Query\QueryRepositoryExtension;
 use Bdf\Prime\Relations\RelationInterface;
 use Bdf\Prime\ServiceLocator;
 use LogicException;
+use ReflectionClass;
 
 use function array_slice;
 use function debug_backtrace;
+use function dirname;
+use function str_starts_with;
 
 /**
  * Store a query analysis report
@@ -280,7 +283,7 @@ final class Report implements Hashable
             }
 
             // Ignore all internal prime calls
-            if ($executeFound && isset($trace['file']) && strpos($trace['file'], self::primeDirectory()) !== 0) {
+            if ($executeFound && isset($trace['file']) && !str_starts_with($trace['file'], self::primeDirectory())) {
                 return $index;
             }
         }
@@ -300,7 +303,7 @@ final class Report implements Hashable
             return self::$primeDirectory;
         }
 
-        $reflection = new \ReflectionClass(ServiceLocator::class);
+        $reflection = new ReflectionClass(ServiceLocator::class);
 
         return self::$primeDirectory = dirname($reflection->getFileName());
     }
