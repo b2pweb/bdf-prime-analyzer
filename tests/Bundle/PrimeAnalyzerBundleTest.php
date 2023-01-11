@@ -57,14 +57,14 @@ class PrimeAnalyzerBundleTest extends TestCase
         $this->assertEquals([
             new ConsoleDumpFormat(),
             new HtmlDumpFormat($baseDir . '/dump.html'),
+            new StorageDumpFormat(
+                new FileReportStorage($baseDir . '/'),
+                new DummyInstantFactory(),
+            ),
             new DiffDumpFormat(
                 new FileReportStorage($baseDir . '/'),
                 new DummyInstantFactory(),
                 [new HtmlDumpFormat($baseDir . '/diff.html')]
-            ),
-            new StorageDumpFormat(
-                new FileReportStorage($baseDir . '/'),
-                new DummyInstantFactory(),
             ),
         ], $formats);
     }

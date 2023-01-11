@@ -18,12 +18,12 @@ prime_analyzer:
   dump_formats:
     - 'console'
     - html: '%kernel.project_dir%/var/prime_analyzer/dump.html'
+    - storage:
+        instant: 'dummy'
+        dsn: 'file://%kernel.project_dir%/var/prime_analyzer/'
     - html: '%kernel.project_dir%/var/prime_analyzer/diff.html'
       diff: true
       storage:
-        instant: 'dummy'
-        dsn: 'file://%kernel.project_dir%/var/prime_analyzer/'
-    - storage:
         instant: 'dummy'
         dsn: 'file://%kernel.project_dir%/var/prime_analyzer/'
 
