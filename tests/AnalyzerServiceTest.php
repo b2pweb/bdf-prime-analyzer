@@ -11,6 +11,7 @@ use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Compiler\Preprocessor\PreprocessorInterface;
 use Bdf\Prime\Query\Query;
+use RuntimeException;
 
 /**
  * Class AnalyzerServiceTest
@@ -39,7 +40,7 @@ class AnalyzerServiceTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), new AnalyzerConfig(), [
             Query::class => new SqlQueryAnalyzer($this->prime, $meta),
         ]);
 
@@ -97,19 +98,45 @@ class AnalyzerServiceTest extends AnalyzerTestCase
     /**
      *
      */
+    public function test_push_with_analysis_configred_as_error_should_raise_exception()
+    {
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), new AnalyzerConfig(errorAnalysis: ['type']), [
+            Query::class => new SqlQueryAnalyzer($this->prime, $meta),
+        ]);
+
+        $r1 = $this->createReport(__FILE__, 12, ['stack1']);
+        $r1->addError('type', 'error 1');
+        $r1->addError('type', 'error 2');
+
+        try {
+            $this->service->push($r1);
+            $this->fail('Should raise exception');
+        } catch (RuntimeException $e) {
+            $this->assertEquals('Query analysis error: error 1, error 2', $e->getMessage());
+        }
+
+        $this->assertEquals([$r1], $this->service->reports());
+        $this->assertEquals(['error 1', 'error 2'], $r1->errors());
+        $this->assertEquals(['type'], $r1->errorsTypes());
+    }
+
+    /**
+     *
+     */
     public function test_push_with_same_stackTrace_should_merge_reports()
     {
         $r1 = $this->createReport(__FILE__, 12, ['stack1']);
-        $r1->addError('error 1');
+        $r1->addError('type', 'error 1');
 
         $r2 = $this->createReport(__FILE__, 12, ['stack1']);
-        $r2->addError('error 2');
+        $r2->addError('type', 'error 2');
 
         $this->service->push($r1);
         $this->service->push($r2);
 
         $this->assertEquals([$r1], $this->service->reports());
         $this->assertEquals(['error 1', 'error 2', 'Suspicious N+1 or loop query'], $r1->errors());
+        $this->assertEquals(['type', 'n+1'], $r1->errorsTypes());
         $this->assertEquals(2, $r1->calls());
     }
 

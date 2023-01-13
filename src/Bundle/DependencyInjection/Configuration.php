@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Bundle\DependencyInjection;
 
+use Bdf\Prime\Analyzer\AnalysisTypes;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -23,6 +24,7 @@ final class Configuration implements ConfigurationInterface
                 ->booleanNode('enabled')->defaultFalse()->end()
                 ->arrayNode('ignored_analysis')->defaultValue([])->scalarPrototype()->end()->end()
                 ->arrayNode('ignored_paths')->defaultValue(['%kernel.project_dir%/tests'])->scalarPrototype()->end()->end()
+                ->arrayNode('error_analysis')->defaultValue([AnalysisTypes::NOT_DECLARED, AnalysisTypes::WRITE])->scalarPrototype()->end()->end()
                 ->append($this->getDumpFormatsNode())
             ->end()
         ;

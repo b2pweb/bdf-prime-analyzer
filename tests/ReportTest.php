@@ -28,7 +28,7 @@ class ReportTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), new AnalyzerConfig(), [
             Query::class => new SqlQueryAnalyzer($this->prime, $meta, []),
             KeyValueQuery::class => new class implements AnalyzerInterface {
                 public function entity(CompilableClause $query): ?string { return null; }

@@ -2,6 +2,7 @@ parameters:
   prime_analyzer.enabled: true
   prime_analyzer.ignored_paths: []
   prime_analyzer.ignored_analysis: []
+  prime_analyzer.error_analysis: []
 
 services:
   Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer:
@@ -36,14 +37,20 @@ services:
     arguments:
       - '@prime'
 
+  Bdf\Prime\Analyzer\AnalyzerConfig:
+    class: Bdf\Prime\Analyzer\AnalyzerConfig
+    arguments:
+      - '%prime_analyzer.ignored_paths%'
+      - '%prime_analyzer.ignored_analysis%'
+      - '%prime_analyzer.error_analysis%'
+
   Bdf\Prime\Analyzer\AnalyzerService:
     class: Bdf\Prime\Analyzer\AnalyzerService
     public: true
     arguments:
       - '@Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata'
+      - '@Bdf\Prime\Analyzer\AnalyzerConfig'
       - []
-      - '%prime_analyzer.ignored_paths%'
-      - '%prime_analyzer.ignored_analysis%'
 
   Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper:
     class: Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper

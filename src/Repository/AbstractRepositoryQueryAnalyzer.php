@@ -55,7 +55,7 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
             }
 
             foreach ($analyzer->analyze($repository, $query, $analyzerParameters?->options() ?? []) as $error) {
-                $report->addError($error);
+                $report->addError($analyzer->type(), $error);
             }
         }
     }

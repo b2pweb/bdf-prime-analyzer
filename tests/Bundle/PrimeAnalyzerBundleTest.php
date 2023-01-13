@@ -37,6 +37,7 @@ class PrimeAnalyzerBundleTest extends TestCase
         $this->assertTrue($kernel->getContainer()->getParameter('prime_analyzer.enabled'));
         $this->assertSame(['ignored/path'], $kernel->getContainer()->getParameter('prime_analyzer.ignored_paths'));
         $this->assertSame(['foo'], $kernel->getContainer()->getParameter('prime_analyzer.ignored_analysis'));
+        $this->assertSame(['or'], $kernel->getContainer()->getParameter('prime_analyzer.error_analysis'));
     }
 
     public function test_report_dumper_formats()
@@ -106,5 +107,15 @@ class PrimeAnalyzerBundleTest extends TestCase
         $this->assertStringContainsString('Use of undeclared attribute "not_found".', file_get_contents(__DIR__ . '/../../var/prime_analyzer/dump.html'));
         $this->assertStringContainsString('Use of undeclared attribute "not_found".', file_get_contents(__DIR__ . '/../../var/prime_analyzer/dummy/dummy.report'));
         $this->assertStringContainsString('No prime reports', file_get_contents(__DIR__ . '/../../var/prime_analyzer/diff.html'));
+    }
+
+    public function test_error_analysis()
+    {
+        $this->expectExceptionMessage('Query analysis error: OR not nested on field "name". Consider wrap the condition into a nested where : $query->where(function($query) { ... })');
+
+        $kernel = new TestKernel('test', true);
+        $kernel->boot();
+
+        TestEntity::orWhere('name', 'foo')->all();
     }
 }

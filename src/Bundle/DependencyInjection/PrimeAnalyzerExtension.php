@@ -34,6 +34,7 @@ class PrimeAnalyzerExtension extends Extension
         $container->setParameter('prime_analyzer.enabled', $config['enabled']);
         $container->setParameter('prime_analyzer.ignored_analysis', (array) $config['ignored_analysis']);
         $container->setParameter('prime_analyzer.ignored_paths', (array) $config['ignored_paths']);
+        $container->setParameter('prime_analyzer.error_analysis', (array) $config['error_analysis']);
 
         $this->configureDumpFormats($config['dump_formats'], $container);
     }

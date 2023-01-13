@@ -17,6 +17,7 @@ class FunctionalTest extends AnalyzerTestCase
      * @var AnalyzerService
      */
     private $service;
+    private AnalyzerConfig $config;
 
     /**
      *
@@ -25,7 +26,7 @@ class FunctionalTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), $this->config = new AnalyzerConfig(), [
             Query::class => new SqlQueryAnalyzer($this->prime, $meta),
             KeyValueQuery::class => new KeyValueQueryAnalyzer($this->prime, $meta),
         ]);
@@ -50,7 +51,7 @@ class FunctionalTest extends AnalyzerTestCase
         $this->assertEquals(3, $report->calls());
         $this->assertContains('Suspicious N+1 or loop query', $report->errors());
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(43, $report->line());
+        $this->assertEquals(44, $report->line());
     }
 
     /**
@@ -67,8 +68,9 @@ class FunctionalTest extends AnalyzerTestCase
 
         $this->assertEquals(2, $report->calls());
         $this->assertEmpty($report->errors());
+        $this->assertEmpty($report->errorsByType());
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(62, $report->line());
+        $this->assertEquals(63, $report->line());
     }
 
     /**
@@ -107,7 +109,22 @@ class FunctionalTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.', 'Use of undeclared attribute "_value".'], $report->errors());
+        $this->assertEquals([
+            AnalysisTypes::NOT_DECLARED => ['Use of undeclared attribute "_value".' => 'Use of undeclared attribute "_value".'],
+            AnalysisTypes::INDEX => ['Query without index. Consider adding an index, or filter on an indexed field.' => 'Query without index. Consider adding an index, or filter on an indexed field.']
+        ], $report->errorsByType());
         $this->assertEquals(1, $report->line());
-        $this->assertEquals(__FILE__."(105) : eval()'d code", $report->file());
+        $this->assertEquals(__FILE__."(107) : eval()'d code", $report->file());
+    }
+
+    /**
+     *
+     */
+    public function test_error_analysis()
+    {
+        $this->expectExceptionMessage('Query analysis error: Use of undeclared attribute "_value".');
+        $this->config->addErrorAnalysis('not_declared');
+
+        TestEntity::where('_value', 42)->first();
     }
 }

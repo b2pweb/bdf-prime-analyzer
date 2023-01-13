@@ -6,6 +6,7 @@ use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use AnalyzerTest\TestEntityWithAnalysisOptions;
+use Bdf\Prime\Analyzer\AnalyzerConfig;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Metadata\Attribute\AnalysisOptions;
 use Bdf\Prime\Analyzer\Metadata\Attribute\IgnoreAnalysis;
@@ -23,7 +24,7 @@ class AnalyzerMetadataTest extends AnalyzerTestCase
         parent::setUp();
 
         $this->metadata = new AnalyzerMetadata($this->prime);
-        $this->service = new AnalyzerService($this->metadata, [Query::class => new SqlQueryAnalyzer($this->prime, $this->metadata)]);
+        $this->service = new AnalyzerService($this->metadata, new AnalyzerConfig(), [Query::class => new SqlQueryAnalyzer($this->prime, $this->metadata)]);
         $this->service->configure($this->prime->connection('test'));
     }
 

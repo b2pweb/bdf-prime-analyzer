@@ -7,6 +7,8 @@ use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use AnalyzerTest\TestEntityMapper;
 use AnalyzerTest\TestEntityOtherConnection;
+use Bdf\Prime\Analyzer\AnalysisTypes;
+use Bdf\Prime\Analyzer\AnalyzerConfig;
 use Bdf\Prime\Analyzer\AnalyzerService;
 use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Report;
@@ -35,7 +37,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         parent::setUp();
 
         $this->analyzer = new SqlQueryAnalyzer($this->prime, $meta = new AnalyzerMetadata($this->prime));
-        $this->service = new AnalyzerService($meta, [Query::class => $this->analyzer]);
+        $this->service = new AnalyzerService($meta, new AnalyzerConfig(), [Query::class => $this->analyzer]);
         $this->service->configure($this->prime->connection('test'));
         $this->service->addIgnoredAnalysis('optimisation');
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class, TestEntityWithIgnore::class])->initialize();
@@ -61,8 +63,9 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(58, $report->line());
+        $this->assertEquals(60, $report->line());
         $this->assertEmpty($report->errors());
+        $this->assertEmpty($report->errorsTypes());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());
     }
@@ -77,6 +80,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['OR not nested on field "value". Consider wrap the condition into a nested where : $query->where(function($query) { ... })'], $report->errors());
+        $this->assertEquals([AnalysisTypes::OR], $report->errorsTypes());
     }
 
     /**
@@ -89,6 +93,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $report->errors());
+        $this->assertEquals([AnalysisTypes::INDEX], $report->errorsTypes());
     }
 
     /**
@@ -110,6 +115,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Use of undeclared attribute "_value".', 'Use of undeclared attribute "_key".'], $report->errors());
+        $this->assertEquals([AnalysisTypes::NOT_DECLARED], $report->errorsTypes());
     }
 
     /**
@@ -125,6 +131,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Sort without index on field "value". Consider adding an index, or ignore this error if a small set of records is returned.'], $report->errors());
+        $this->assertEquals([AnalysisTypes::SORT], $report->errorsTypes());
     }
 
     /**
@@ -140,6 +147,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertContains('Use of relation distant key "relationEntity.key" which can cause an unnecessary join. Prefer use the local key "key"', $report->errors());
+        $this->assertEquals([AnalysisTypes::RELATION_DISTANT_KEY], $report->errorsTypes());
     }
 
     /**
@@ -155,6 +163,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $report->errors());
+        $this->assertEquals([AnalysisTypes::INDEX], $report->errorsTypes());
     }
 
     /**
@@ -170,6 +179,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
         $report = $this->service->reports()[0];
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.'], $report->errors());
+        $this->assertEquals([AnalysisTypes::INDEX], $report->errorsTypes());
     }
 
     /**
@@ -181,6 +191,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $report = $this->service->reports()[0];
         $this->assertEmpty($report->errors());
+        $this->assertEmpty($report->errorsTypes());
     }
 
     /**
@@ -197,6 +208,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertCount(2, $this->service->reports());
         $this->assertEquals(['Use of undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+        $this->assertEquals([AnalysisTypes::NOT_DECLARED], $this->service->reports()[1]->errorsTypes());
     }
 
     /**
@@ -213,6 +225,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertCount(2, $this->service->reports());
         $this->assertEquals(['Use of undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+        $this->assertEquals([AnalysisTypes::NOT_DECLARED], $this->service->reports()[1]->errorsTypes());
     }
 
     /**
@@ -235,6 +248,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertCount(2, $this->service->reports());
         $this->assertEquals(['Write on undeclared attribute "_key".'], $this->service->reports()[1]->errors());
+        $this->assertEquals([AnalysisTypes::WRITE], $this->service->reports()[1]->errorsTypes());
     }
 }
 

@@ -25,6 +25,6 @@ final class RegisterAnalyzersPass implements CompilerPassInterface
             $analyzers[$tags[0]['query']] = new Reference($id);
         }
 
-        $container->getDefinition(AnalyzerService::class)->replaceArgument(1, $analyzers);
+        $container->getDefinition(AnalyzerService::class)->replaceArgument(2, $analyzers);
     }
 }

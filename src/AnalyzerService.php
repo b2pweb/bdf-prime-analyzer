@@ -9,8 +9,9 @@ use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 
+use RuntimeException;
+
 use function get_class;
-use function str_starts_with;
 
 /**
  * Class AnalyzerService
@@ -24,6 +25,7 @@ class AnalyzerService
 
     public function __construct(
         private AnalyzerMetadata $metadata,
+        private AnalyzerConfig $config,
 
         /**
          * Map a query class name to the corresponding analyzer
@@ -31,23 +33,6 @@ class AnalyzerService
          * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
          */
         private array $analyzerByQuery,
-
-        /**
-         * Paths to ignore
-         * This path must be relative to the project root
-         *
-         * @var string[]
-         */
-        private array $ignoredPath = [],
-
-        /**
-         * List of analysis to ignore
-         *
-         * @var string[]
-         *
-         * @see AnalysisTypes
-         */
-        private array $ignoredAnalysis = [],
     ) {
         $this->reports = new HashSet();
     }
@@ -91,10 +76,18 @@ class AnalyzerService
 
             // Ignore N+1 caused by with : they are either false positive or caused by a real N+1 already reported
             if (!$report->isIgnored(AnalysisTypes::N_PLUS_1) && !$report->isWith()) {
-                $savedReport->addError('Suspicious N+1 or loop query');
+                $savedReport->addError(AnalysisTypes::N_PLUS_1, 'Suspicious N+1 or loop query');
             }
+
+            $report = $savedReport;
         } else {
             $this->reports->add($report);
+        }
+
+        foreach ($report->errorsByType() as $type => $errors) {
+            if ($this->config->isErrorAnalysis($type)) {
+                throw new RuntimeException('Query analysis error: '.implode(', ', $errors));
+            }
         }
     }
 
@@ -136,20 +129,22 @@ class AnalyzerService
      * Add a new path to ignore
      *
      * @param string $path
+     * @deprecated Use AnalyzerConfig::addIgnoredPath()
      */
     public function addIgnoredPath(string $path): void
     {
-        $this->ignoredPath[$path] = $path;
+        $this->config->addIgnoredPath($path);
     }
 
     /**
      * Ignore an analysis
      *
      * @param string $analysis
+     * @deprecated Use AnalyzerConfig::addIgnoredAnalysis()
      */
     public function addIgnoredAnalysis(string $analysis): void
     {
-        $this->ignoredAnalysis[$analysis] = $analysis;
+        $this->config->addIgnoredAnalysis($analysis);
     }
 
     /**
@@ -169,17 +164,11 @@ class AnalyzerService
             return null;
         }
 
-        foreach ($this->ignoredPath as $path) {
-            $reportPath = realpath($report->file());
-            $ignoredPath = realpath($path);
-
-            // The path is ignored
-            if ($reportPath && $ignoredPath && str_starts_with($reportPath, $ignoredPath)) {
-                return null;
-            }
+        if ($this->config->isIgnoredPath($report->file())) {
+            return null;
         }
 
-        foreach ($this->ignoredAnalysis as $analysis) {
+        foreach ($this->config->ignoredAnalysis() as $analysis) {
             $report->ignore($analysis);
         }
 
