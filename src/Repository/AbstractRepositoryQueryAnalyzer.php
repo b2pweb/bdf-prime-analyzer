@@ -3,10 +3,9 @@
 namespace Bdf\Prime\Analyzer\Repository;
 
 use Bdf\Prime\Analyzer\AnalyzerInterface;
-use Bdf\Prime\Analyzer\IgnoreTagParser;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Connection\ConnectionInterface;
-use Bdf\Prime\Mapper\Mapper;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Repository\RepositoryInterface;
 use Bdf\Prime\ServiceLocator;
@@ -19,13 +18,9 @@ use Bdf\Prime\ServiceLocator;
  */
 abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
 {
-    /**
-     * @var array<string, array<string, string[]|false>>
-     */
-    private array $analyzersParameters = [];
-
     public function __construct(
         private ServiceLocator $serviceLocator,
+        private AnalyzerMetadata $metadata,
 
         /**
          * List of analyzers to apply
@@ -46,20 +41,20 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
             return;
         }
 
-        $parameters = $this->analyzersParameters($repository->mapper());
+        $parameters = $this->metadata->analysisOptions($report);
 
         foreach ($this->analyzers as $analyzer) {
             if ($report->isIgnored($analyzer->type())) {
                 continue;
             }
 
-            $analyzerParameters = $parameters[$analyzer->type()] ?? [];
+            $analyzerParameters = $parameters[$analyzer->type()] ?? null;
 
-            if ($analyzerParameters === false) {
+            if ($analyzerParameters && $analyzerParameters->ignore()) {
                 continue;
             }
 
-            foreach ($analyzer->analyze($repository, $query, $analyzerParameters) as $error) {
+            foreach ($analyzer->analyze($repository, $query, $analyzerParameters?->options() ?? []) as $error) {
                 $report->addError($error);
             }
         }
@@ -85,30 +80,5 @@ abstract class AbstractRepositoryQueryAnalyzer implements AnalyzerInterface
         }
 
         return null;
-    }
-
-    /**
-     * Get the analyzer parameters for the given mapper
-     *
-     * @param Mapper $mapper
-     *
-     * @return array<string, string[]|false>
-     * @throws \ReflectionException
-     */
-    private function analyzersParameters(Mapper $mapper): array
-    {
-        if (isset($this->analyzersParameters[$mapper->getEntityClass()])) {
-            return $this->analyzersParameters[$mapper->getEntityClass()];
-        }
-
-        $reflection = new \ReflectionClass($mapper);
-        $docblock = $reflection->getDocComment();
-        $parameters = [];
-
-        foreach (IgnoreTagParser::parseDocBlock($docblock) as $tag) {
-            $parameters[$tag[0]] = array_slice($tag, 1) ?: false;
-        }
-
-        return $this->analyzersParameters[$mapper->getEntityClass()] = $parameters;
     }
 }

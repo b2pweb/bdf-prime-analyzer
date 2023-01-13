@@ -7,6 +7,7 @@ use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use AnalyzerTest\TestEntityOtherConnection;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
@@ -33,8 +34,8 @@ class BulkInsertQueryAnalyzerTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->analyzer = new BulkInsertQueryAnalyzer($this->prime);
-        $this->service = new AnalyzerService([BulkInsertQuery::class => $this->analyzer]);
+        $this->analyzer = new BulkInsertQueryAnalyzer($this->prime, $meta = new AnalyzerMetadata($this->prime));
+        $this->service = new AnalyzerService($meta, [BulkInsertQuery::class => $this->analyzer]);
         $this->service->configure($this->prime->connection('test'));
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();
     }
@@ -59,7 +60,7 @@ class BulkInsertQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(56, $report->line());
+        $this->assertEquals(57, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());

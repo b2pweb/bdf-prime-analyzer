@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer\Testing;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Query\Query;
 
@@ -49,7 +50,7 @@ class AnalyzerReportDumperTest extends AnalyzerTestCase
     public function test_dump_functional()
     {
         $this->testPack->declareEntity([TestEntity::class])->initialize();
-        $service = new AnalyzerService([Query::class => new SqlQueryAnalyzer($this->prime)]);
+        $service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [Query::class => new SqlQueryAnalyzer($this->prime, $meta)]);
         $service->configure($this->prime->connection('test'));
 
         TestEntity::all();

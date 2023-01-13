@@ -8,6 +8,7 @@ use AnalyzerTest\TestEntity;
 use AnalyzerTest\TestEntityMapper;
 use AnalyzerTest\TestEntityOtherConnection;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Query\Query;
 
@@ -33,8 +34,8 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->analyzer = new SqlQueryAnalyzer($this->prime);
-        $this->service = new AnalyzerService([Query::class => $this->analyzer]);
+        $this->analyzer = new SqlQueryAnalyzer($this->prime, $meta = new AnalyzerMetadata($this->prime));
+        $this->service = new AnalyzerService($meta, [Query::class => $this->analyzer]);
         $this->service->configure($this->prime->connection('test'));
         $this->service->addIgnoredAnalysis('optimisation');
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class, TestEntityWithIgnore::class])->initialize();
@@ -60,7 +61,7 @@ class SqlQueryAnalyzerTest extends AnalyzerTestCase
 
         $this->assertInstanceOf(Report::class, $report);
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(57, $report->line());
+        $this->assertEquals(58, $report->line());
         $this->assertEmpty($report->errors());
         $this->assertEquals(1, $report->calls());
         $this->assertEquals(TestEntity::class, $report->entity());

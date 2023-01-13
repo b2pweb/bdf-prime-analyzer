@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\KeyValueQuery;
 
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
@@ -20,11 +21,12 @@ final class KeyValueQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      * KeyValueQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
+     * @param AnalyzerMetadata $metadata
      * @param RepositoryQueryErrorAnalyzerInterface<KeyValueQuery>[]|null $analyzers
      */
-    public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
+    public function __construct(ServiceLocator $serviceLocator, AnalyzerMetadata $metadata, ?array $analyzers = null)
     {
-        parent::__construct($serviceLocator, $analyzers ?? [
+        parent::__construct($serviceLocator, $metadata, $analyzers ?? [
             new NotDeclaredAttributesAnalyzer(), new MissingIndexAnalyzer(), new UpdateValuesAnalyzer(),
         ]);
     }

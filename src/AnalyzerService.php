@@ -4,6 +4,7 @@ namespace Bdf\Prime\Analyzer;
 
 use Bdf\Collection\HashSet;
 use Bdf\Collection\SetInterface;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Factory\DefaultQueryFactory;
@@ -22,6 +23,8 @@ class AnalyzerService
     private SetInterface $reports;
 
     public function __construct(
+        private AnalyzerMetadata $metadata,
+
         /**
          * Map a query class name to the corresponding analyzer
          *
@@ -177,6 +180,10 @@ class AnalyzerService
         }
 
         foreach ($this->ignoredAnalysis as $analysis) {
+            $report->ignore($analysis);
+        }
+
+        foreach ($this->metadata->ignoredAnalysis($report) as $analysis) {
             $report->ignore($analysis);
         }
 

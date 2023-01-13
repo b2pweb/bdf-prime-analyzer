@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Testing\AnalyzerReportDumper;
 use Bdf\Prime\Query\CompilableClause;
@@ -38,8 +39,8 @@ class AnalyzerServiceTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService([
-            Query::class => new SqlQueryAnalyzer($this->prime),
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+            Query::class => new SqlQueryAnalyzer($this->prime, $meta),
         ]);
 
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();

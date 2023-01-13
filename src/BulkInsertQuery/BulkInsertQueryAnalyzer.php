@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\BulkInsertQuery;
 
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
@@ -20,11 +21,12 @@ final class BulkInsertQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
      * BulkInsertQueryAnalyzer constructor.
      *
      * @param ServiceLocator $serviceLocator
+     * @param AnalyzerMetadata $metadata
      * @param array<RepositoryQueryErrorAnalyzerInterface<BulkInsertQuery>>|null $analyzers
      */
-    public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
+    public function __construct(ServiceLocator $serviceLocator, AnalyzerMetadata $metadata, ?array $analyzers = null)
     {
-        parent::__construct($serviceLocator, $analyzers ?? [
+        parent::__construct($serviceLocator, $metadata, $analyzers ?? [
             new InsertValuesAnalyzer(),
         ]);
     }

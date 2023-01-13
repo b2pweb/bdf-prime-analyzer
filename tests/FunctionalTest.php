@@ -6,6 +6,7 @@ use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
 use Bdf\Prime\Query\Query;
@@ -24,9 +25,9 @@ class FunctionalTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService([
-            Query::class => new SqlQueryAnalyzer($this->prime),
-            KeyValueQuery::class => new KeyValueQueryAnalyzer($this->prime),
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+            Query::class => new SqlQueryAnalyzer($this->prime, $meta),
+            KeyValueQuery::class => new KeyValueQueryAnalyzer($this->prime, $meta),
         ]);
 
         $this->testPack->declareEntity([TestEntity::class, RelationEntity::class])->initialize();
@@ -49,7 +50,7 @@ class FunctionalTest extends AnalyzerTestCase
         $this->assertEquals(3, $report->calls());
         $this->assertContains('Suspicious N+1 or loop query', $report->errors());
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(42, $report->line());
+        $this->assertEquals(43, $report->line());
     }
 
     /**
@@ -67,7 +68,7 @@ class FunctionalTest extends AnalyzerTestCase
         $this->assertEquals(2, $report->calls());
         $this->assertEmpty($report->errors());
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(61, $report->line());
+        $this->assertEquals(62, $report->line());
     }
 
     /**
@@ -107,6 +108,6 @@ class FunctionalTest extends AnalyzerTestCase
 
         $this->assertEquals(['Query without index. Consider adding an index, or filter on an indexed field.', 'Use of undeclared attribute "_value".'], $report->errors());
         $this->assertEquals(1, $report->line());
-        $this->assertEquals(__FILE__."(104) : eval()'d code", $report->file());
+        $this->assertEquals(__FILE__."(105) : eval()'d code", $report->file());
     }
 }

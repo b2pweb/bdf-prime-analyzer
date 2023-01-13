@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\RelationEntity;
 use AnalyzerTest\TestEntity;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery;
@@ -27,8 +28,8 @@ class ReportTest extends AnalyzerTestCase
     {
         parent::setUp();
 
-        $this->service = new AnalyzerService([
-            Query::class => new SqlQueryAnalyzer($this->prime, []),
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [
+            Query::class => new SqlQueryAnalyzer($this->prime, $meta, []),
             KeyValueQuery::class => new class implements AnalyzerInterface {
                 public function entity(CompilableClause $query): ?string { return null; }
                 public function analyze(Report $report, CompilableClause $query): void {}
@@ -47,7 +48,7 @@ class ReportTest extends AnalyzerTestCase
 
         $report = $this->service->reports()[0];
 
-        $this->assertEquals(46, $report->line());
+        $this->assertEquals(47, $report->line());
         $this->assertEquals(__FILE__, $report->file());
         $this->assertEquals('__callStatic', $report->stackTrace()[0]['function']);
         $this->assertEquals('test_simple_query', $report->stackTrace()[1]['function']);
@@ -64,7 +65,7 @@ class ReportTest extends AnalyzerTestCase
 
         $report = $this->service->reports()[0];
 
-        $this->assertEquals(63, $report->line());
+        $this->assertEquals(64, $report->line());
         $this->assertEquals(__FILE__, $report->file());
         $this->assertTrue($report->isLoad());
         $this->assertFalse($report->isWith());
@@ -82,7 +83,7 @@ class ReportTest extends AnalyzerTestCase
 
         $report = $this->service->reports()[1];
 
-        $this->assertEquals(81, $report->line());
+        $this->assertEquals(82, $report->line());
         $this->assertEquals(__FILE__, $report->file());
         $this->assertTrue($report->isLoad());
         $this->assertTrue($report->isWith());

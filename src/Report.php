@@ -60,7 +60,6 @@ final class Report implements Hashable
 
         if ($loadStackTrace) {
             $this->initializeStackTrace();
-            $this->loadIgnored();
         } else {
             $this->line = 0;
             $this->file = '';
@@ -80,22 +79,6 @@ final class Report implements Hashable
 
         $this->file = $this->stackTrace[0]['file'];
         $this->line = $this->stackTrace[0]['line'];
-    }
-
-    /**
-     * Load the analyzer-ignore tag
-     */
-    private function loadIgnored(): void
-    {
-        if (!file_exists($this->file)) {
-            return;
-        }
-
-        $line = file($this->file)[$this->line - 1];
-
-        foreach (IgnoreTagParser::parseLine($line) as $ignored) {
-            $this->ignore($ignored);
-        }
     }
 
     /**

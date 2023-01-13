@@ -8,6 +8,7 @@ services:
     class: Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer
     arguments:
       - '@prime'
+      - '@Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata'
     tags:
       - name: 'prime_analyzer.query_analyzer'
         query: Bdf\Prime\Query\Query
@@ -16,6 +17,7 @@ services:
     class: Bdf\Prime\Analyzer\KeyValueQuery\KeyValueQueryAnalyzer
     arguments:
       - '@prime'
+      - '@Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata'
     tags:
       - name: 'prime_analyzer.query_analyzer'
         query: Bdf\Prime\Query\Custom\KeyValue\KeyValueQuery
@@ -24,14 +26,21 @@ services:
     class: Bdf\Prime\Analyzer\BulkInsertQuery\BulkInsertQueryAnalyzer
     arguments:
       - '@prime'
+      - '@Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata'
     tags:
       - name: 'prime_analyzer.query_analyzer'
         query: Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery
+
+  Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata:
+    class: Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata
+    arguments:
+      - '@prime'
 
   Bdf\Prime\Analyzer\AnalyzerService:
     class: Bdf\Prime\Analyzer\AnalyzerService
     public: true
     arguments:
+      - '@Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata'
       - []
       - '%prime_analyzer.ignored_paths%'
       - '%prime_analyzer.ignored_analysis%'

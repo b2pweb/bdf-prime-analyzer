@@ -5,6 +5,7 @@ namespace Storage;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Storage\Instant\DummyInstant;
 use Bdf\Prime\Analyzer\Storage\Instant\DummyInstantFactory;
@@ -50,7 +51,7 @@ class JenkinsArtifactStorageTest extends AnalyzerTestCase
         $this->instantFactory = new DummyInstantFactory();
 
         $this->testPack->declareEntity([TestEntity::class])->initialize();
-        $this->service = new AnalyzerService([Query::class => new SqlQueryAnalyzer($this->prime)]);
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [Query::class => new SqlQueryAnalyzer($this->prime, $meta)]);
         $this->service->configure($this->prime->connection('test'));
     }
 

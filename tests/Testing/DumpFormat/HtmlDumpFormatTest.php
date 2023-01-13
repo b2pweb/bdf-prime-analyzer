@@ -5,6 +5,7 @@ namespace Bdf\Prime\Analyzer\Testing\DumpFormat;
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Query\Query;
 
@@ -56,7 +57,7 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
     public function test_dump()
     {
         $this->testPack->declareEntity([TestEntity::class])->initialize();
-        $service = new AnalyzerService([Query::class => new SqlQueryAnalyzer($this->prime)]);
+        $service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), [Query::class => new SqlQueryAnalyzer($this->prime, $meta)]);
         $service->configure($this->prime->connection('test'));
 
         TestEntity::all();
@@ -71,10 +72,10 @@ class HtmlDumpFormatTest extends AnalyzerTestCase
         $content = file_get_contents($this->file);
         $this->assertStringContainsString('Prime analyser report', $content);
         $this->assertStringContainsString('Prime reports (3) :', $content);
-        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:63 on AnalyzerTest\TestEntity (called 1 times)', $content);
+        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:64 on AnalyzerTest\TestEntity (called 1 times)', $content);
         $this->assertStringContainsString('Query without index. Consider adding an index, or filter on an indexed field.', $content);
         $this->assertStringContainsString('Use of undeclared attribute "_value".', $content);
-        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:66 on AnalyzerTest\TestEntity (called 3 times)', $content);
+        $this->assertStringContainsString('DumpFormat/HtmlDumpFormatTest.php:67 on AnalyzerTest\TestEntity (called 3 times)', $content);
         $this->assertStringContainsString('Suspicious N+1 or loop query', $content);
     }
 }
