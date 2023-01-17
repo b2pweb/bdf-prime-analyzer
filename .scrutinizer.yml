@@ -1,13 +1,13 @@
 build:
   environment:
-    php: 7.2.24
+    php: 8.1
     timezone: Europe/Paris
 
   nodes:
     tests:
       tests:
         override:
-          - command: composer run tests-with-coverage
+          - command: XDEBUG_MODE=coverage composer run tests-with-coverage
             coverage:
               file: coverage.xml
               format: clover

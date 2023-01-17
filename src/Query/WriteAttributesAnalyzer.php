@@ -5,6 +5,8 @@ namespace Bdf\Prime\Analyzer\Query;
 use Bdf\Prime\Analyzer\Repository\AbstractWriteAttributesAnalyzer;
 use Bdf\Prime\Query\CompilableClause;
 
+use function is_array;
+
 /**
  * Analyze the values to write (i.e. insert or update)
  *
@@ -17,6 +19,8 @@ final class WriteAttributesAnalyzer extends AbstractWriteAttributesAnalyzer
      */
     protected function values(CompilableClause $query): array
     {
-        return $query->statements['values']['data'] ?? [];
+        $values = $query->statements['values']['data'] ?? [];
+
+        return is_array($values) ? $values : [];
     }
 }

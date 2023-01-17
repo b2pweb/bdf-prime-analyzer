@@ -4,7 +4,9 @@ namespace Testing\DumpFormat;
 
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
+use Bdf\Prime\Analyzer\AnalyzerConfig;
 use Bdf\Prime\Analyzer\AnalyzerService;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Query\SqlQueryAnalyzer;
 use Bdf\Prime\Analyzer\Report;
 use Bdf\Prime\Analyzer\Storage\FileReportStorage;
@@ -72,7 +74,7 @@ class DiffDumpFormatTest extends AnalyzerTestCase
         );
 
         $this->testPack->declareEntity([TestEntity::class])->initialize();
-        $this->service = new AnalyzerService([Query::class => new SqlQueryAnalyzer($this->prime)]);
+        $this->service = new AnalyzerService($meta = new AnalyzerMetadata($this->prime), new AnalyzerConfig(), [Query::class => new SqlQueryAnalyzer($this->prime, $meta)]);
         $this->service->configure($this->prime->connection('test'));
     }
 

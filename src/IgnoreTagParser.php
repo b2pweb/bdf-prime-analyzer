@@ -2,6 +2,14 @@
 
 namespace Bdf\Prime\Analyzer;
 
+use function array_filter;
+use function array_map;
+use function array_values;
+use function explode;
+use function strlen;
+use function strpos;
+use function substr;
+
 /**
  * Handle parsing of the ignore tag
  */

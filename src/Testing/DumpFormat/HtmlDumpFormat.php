@@ -10,19 +10,8 @@ use Bdf\Collection\Stream\Streams;
  */
 final class HtmlDumpFormat implements DumpFormatInterface
 {
-    /**
-     * @var string
-     */
-    private $filename;
-
-    /**
-     * HtmlDumpFormat constructor.
-     *
-     * @param string $filename
-     */
-    public function __construct(string $filename)
+    public function __construct(private string $filename)
     {
-        $this->filename = $filename;
     }
 
     /**

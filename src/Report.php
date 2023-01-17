@@ -9,6 +9,14 @@ use Bdf\Prime\Query\QueryRepositoryExtension;
 use Bdf\Prime\Relations\RelationInterface;
 use Bdf\Prime\ServiceLocator;
 use LogicException;
+use ReflectionClass;
+
+use function array_keys;
+use function array_replace_recursive;
+use function array_slice;
+use function debug_backtrace;
+use function dirname;
+use function str_starts_with;
 
 /**
  * Store a query analysis report
@@ -21,49 +29,49 @@ final class Report implements Hashable
     private static $primeDirectory;
 
     /**
-     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
-     */
-    private $stackTrace;
-
-    /**
-     * @var string
-     */
-    private $file;
-
-    /**
-     * @var int
-     */
-    private $line;
-
-    /**
-     * @var string[]
-     */
-    private $errors = [];
-
-    /**
      * @var class-string|null
      */
-    private $entity;
+    private ?string $entity;
 
     /**
+     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
+     */
+    private array $stackTrace;
+
+    /**
+     * Filename of the file that has trigger this report (the file that has called the query)
+     * An empty string if stack trace is not loaded
+     *
+     * @var string
+     */
+    private string $file;
+
+    /**
+     * Line number on the file that has trigger this report
+     *
      * @var int
      */
-    private $calls = 1;
+    private int $line;
 
     /**
-     * @var bool
+     * List of errors messages, indexed by the analysis type
+     * The key of the sub-array is same as the value, to avoid duplication
+     *
+     * @var array<string, array<string, string>>
      */
-    private $loadQuery = false;
+    private array $errors = [];
 
     /**
-     * @var bool
+     * Query call count
      */
-    private $postProcess = false;
+    private int $calls = 1;
+    private bool $loadQuery = false;
+    private bool $postProcess = false;
 
     /**
      * @var array<string, bool>
      */
-    private $ignored = [];
+    private array $ignored = [];
 
     /**
      * Report constructor.
@@ -77,7 +85,6 @@ final class Report implements Hashable
 
         if ($loadStackTrace) {
             $this->initializeStackTrace();
-            $this->loadIgnored();
         } else {
             $this->line = 0;
             $this->file = '';
@@ -97,22 +104,6 @@ final class Report implements Hashable
 
         $this->file = $this->stackTrace[0]['file'];
         $this->line = $this->stackTrace[0]['line'];
-    }
-
-    /**
-     * Load the analyzer-ignore tag
-     */
-    private function loadIgnored(): void
-    {
-        if (!file_exists($this->file)) {
-            return;
-        }
-
-        $line = file($this->file)[$this->line - 1];
-
-        foreach (IgnoreTagParser::parseLine($line) as $ignored) {
-            $this->ignore($ignored);
-        }
     }
 
     /**
@@ -151,11 +142,40 @@ final class Report implements Hashable
     /**
      * List the reported errors
      *
-     * @return string[]
+     * @return list<string>
      */
     public function errors(): array
     {
-        return array_values($this->errors);
+        $errors = [];
+
+        foreach ($this->errors as $messages) {
+            foreach ($messages as $message) {
+                $errors[] = $message;
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * List the reported errors types
+     *
+     * @return list<string>
+     */
+    public function errorsTypes(): array
+    {
+        return array_keys($this->errors);
+    }
+
+    /**
+     * Get list of errors indexed by analysis type
+     * The key is the analysis type, and the value is the list of errors
+     *
+     * @return array<string, array<string, string>>
+     */
+    public function errorsByType(): array
+    {
+        return $this->errors;
     }
 
     /**
@@ -202,11 +222,12 @@ final class Report implements Hashable
      * Add a new error into the report
      * If the error is already set, it'll be ignored
      *
-     * @param string $error
+     * @param string $type The error type (i.e. analysis type)
+     * @param string $error The error message
      */
-    public function addError(string $error): void
+    public function addError(string $type, string $error): void
     {
-        $this->errors[$error] = $error;
+        $this->errors[$type][$error] = $error;
     }
 
     /**
@@ -216,14 +237,14 @@ final class Report implements Hashable
      */
     public function merge(Report $report): void
     {
-        $this->errors += $report->errors;
+        $this->errors = array_replace_recursive($this->errors, $report->errors);
         $this->calls += $report->calls;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function hash()
+    public function hash(): string
     {
         return json_encode([$this->entity, $this->stackTrace]);
     }
@@ -300,7 +321,7 @@ final class Report implements Hashable
             }
 
             // Ignore all internal prime calls
-            if ($executeFound && isset($trace['file']) && strpos($trace['file'], self::primeDirectory()) !== 0) {
+            if ($executeFound && isset($trace['file']) && !str_starts_with($trace['file'], self::primeDirectory())) {
                 return $index;
             }
         }
@@ -320,7 +341,7 @@ final class Report implements Hashable
             return self::$primeDirectory;
         }
 
-        $reflection = new \ReflectionClass(ServiceLocator::class);
+        $reflection = new ReflectionClass(ServiceLocator::class);
 
         return self::$primeDirectory = dirname($reflection->getFileName());
     }

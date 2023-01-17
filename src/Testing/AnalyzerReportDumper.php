@@ -26,12 +26,12 @@ class AnalyzerReportDumper
     /**
      * @var Report[]
      */
-    private $reports = [];
+    private array $reports = [];
 
     /**
      * @var DumpFormatInterface[]
      */
-    private $formats;
+    private array $formats;
 
     /**
      * AnalyzerReportDumper constructor.

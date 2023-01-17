@@ -13,7 +13,9 @@ use RecursiveIteratorIterator;
 /**
  * Iterate over nested query clause
  *
- * @template Streamable<array, array-key>
+ * @implements Streamable<array, array-key>
+ * @implements RecursiveIterator<array-key, array>
+ * @extends ArrayIterator<array-key, array>
  */
 final class RecursiveClauseIterator extends ArrayIterator implements RecursiveIterator, Streamable
 {

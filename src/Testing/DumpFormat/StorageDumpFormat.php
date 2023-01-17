@@ -12,25 +12,14 @@ use Bdf\Prime\Analyzer\Storage\ReportStorageInterface;
 final class StorageDumpFormat implements DumpFormatInterface
 {
     /**
-     * @var ReportStorageInterface
-     */
-    private $storage;
-
-    /**
-     * @var ReportInstantFactory
-     */
-    private $instantFactory;
-
-
-    /**
      * StorageDumpFormat constructor.
      * @param ReportStorageInterface $storage
      * @param ReportInstantFactory $instantFactory
      */
-    public function __construct(ReportStorageInterface $storage, ReportInstantFactory $instantFactory)
-    {
-        $this->storage = $storage;
-        $this->instantFactory = $instantFactory;
+    public function __construct(
+        private ReportStorageInterface $storage,
+        private ReportInstantFactory $instantFactory
+    ) {
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Bdf\Prime\Analyzer\KeyValueQuery;
 
 use AnalyzerTest\AnalyzerTestCase;
 use AnalyzerTest\TestEntity;
+use Bdf\Prime\Analyzer\AnalysisTypes;
 
 /**
  * Class MissingIndexAnalyzerTest

@@ -4,9 +4,14 @@ namespace Bdf\Prime\Analyzer;
 
 use Bdf\Collection\HashSet;
 use Bdf\Collection\SetInterface;
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Connection\ConnectionInterface;
 use Bdf\Prime\Query\CompilableClause;
 use Bdf\Prime\Query\Factory\DefaultQueryFactory;
+
+use RuntimeException;
+
+use function get_class;
 
 /**
  * Class AnalyzerService
@@ -14,38 +19,21 @@ use Bdf\Prime\Query\Factory\DefaultQueryFactory;
 class AnalyzerService
 {
     /**
-     * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
+     * Store all generated reports.
      */
-    private $analyzerByQuery;
+    private SetInterface $reports;
 
-    /**
-     * @var string[]
-     */
-    private $ignoredPath;
+    public function __construct(
+        private AnalyzerMetadata $metadata,
+        private AnalyzerConfig $config,
 
-    /**
-     * @var string[]
-     */
-    private $ignoredAnalysis;
-
-    /**
-     * @var SetInterface
-     */
-    private $reports;
-
-
-    /**
-     * AnalyzerService constructor.
-     *
-     * @param array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface> $analyzerByQuery
-     * @param string[] $ignoredPath
-     * @param string[] $ignoredAnalysis
-     */
-    public function __construct(array $analyzerByQuery, array $ignoredPath = [], array $ignoredAnalysis = [])
-    {
-        $this->analyzerByQuery = $analyzerByQuery;
-        $this->ignoredPath = $ignoredPath;
-        $this->ignoredAnalysis = $ignoredAnalysis;
+        /**
+         * Map a query class name to the corresponding analyzer
+         *
+         * @var array<class-string<\Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface>, AnalyzerInterface>
+         */
+        private array $analyzerByQuery,
+    ) {
         $this->reports = new HashSet();
     }
 
@@ -88,10 +76,18 @@ class AnalyzerService
 
             // Ignore N+1 caused by with : they are either false positive or caused by a real N+1 already reported
             if (!$report->isIgnored(AnalysisTypes::N_PLUS_1) && !$report->isWith()) {
-                $savedReport->addError('Suspicious N+1 or loop query');
+                $savedReport->addError(AnalysisTypes::N_PLUS_1, 'Suspicious N+1 or loop query');
             }
+
+            $report = $savedReport;
         } else {
             $this->reports->add($report);
+        }
+
+        foreach ($report->errorsByType() as $type => $errors) {
+            if ($this->config->isErrorAnalysis($type)) {
+                throw new RuntimeException('Query analysis error: '.implode(', ', $errors));
+            }
         }
     }
 
@@ -99,19 +95,18 @@ class AnalyzerService
      * Perform analysis on a query
      * Note: the result will not be push()ed into the service
      *
-     * @param CompilableClause $query
+     * @param \Bdf\Prime\Query\CompilableClause&\Bdf\Prime\Query\Contract\Compilable&\Bdf\Prime\Query\CommandInterface $query
      *
      * @return Report|null
      */
     public function analyze(CompilableClause $query): ?Report
     {
-        $type = get_class($query);
+        $analyzer = $this->analyzerByQuery[get_class($query)] ?? null;
 
-        if (!isset($this->analyzerByQuery[$type])) {
+        if (!$analyzer) {
             return null;
         }
 
-        $analyzer = $this->analyzerByQuery[$type];
         $report = new Report($analyzer->entity($query), false);
 
         $analyzer->analyze($report, $query);
@@ -134,20 +129,22 @@ class AnalyzerService
      * Add a new path to ignore
      *
      * @param string $path
+     * @deprecated Use AnalyzerConfig::addIgnoredPath()
      */
     public function addIgnoredPath(string $path): void
     {
-        $this->ignoredPath[$path] = $path;
+        $this->config->addIgnoredPath($path);
     }
 
     /**
      * Ignore an analysis
      *
      * @param string $analysis
+     * @deprecated Use AnalyzerConfig::addIgnoredAnalysis()
      */
     public function addIgnoredAnalysis(string $analysis): void
     {
-        $this->ignoredAnalysis[$analysis] = $analysis;
+        $this->config->addIgnoredAnalysis($analysis);
     }
 
     /**
@@ -167,14 +164,15 @@ class AnalyzerService
             return null;
         }
 
-        foreach ($this->ignoredPath as $path) {
-            // The path is ignored
-            if (strpos($report->file(), $path) === 0) {
-                return null;
-            }
+        if ($this->config->isIgnoredPath($report->file())) {
+            return null;
         }
 
-        foreach ($this->ignoredAnalysis as $analysis) {
+        foreach ($this->config->ignoredAnalysis() as $analysis) {
+            $report->ignore($analysis);
+        }
+
+        foreach ($this->metadata->ignoredAnalysis($report) as $analysis) {
             $report->ignore($analysis);
         }
 

@@ -2,6 +2,7 @@
 
 namespace Bdf\Prime\Analyzer\Query;
 
+use Bdf\Prime\Analyzer\Metadata\AnalyzerMetadata;
 use Bdf\Prime\Analyzer\Repository\AbstractRepositoryQueryAnalyzer;
 use Bdf\Prime\Analyzer\Repository\RepositoryQueryErrorAnalyzerInterface;
 use Bdf\Prime\Query\CompilableClause;
@@ -19,11 +20,12 @@ final class SqlQueryAnalyzer extends AbstractRepositoryQueryAnalyzer
     /**
      * SqlQueryAnalyzer constructor.
      * @param ServiceLocator $serviceLocator
+     * @param AnalyzerMetadata $metadata
      * @param RepositoryQueryErrorAnalyzerInterface<Query>[]|null $analyzers
      */
-    public function __construct(ServiceLocator $serviceLocator, ?array $analyzers = null)
+    public function __construct(ServiceLocator $serviceLocator, AnalyzerMetadata $metadata, ?array $analyzers = null)
     {
-        parent::__construct($serviceLocator, $analyzers ?? [
+        parent::__construct($serviceLocator, $metadata, $analyzers ?? [
             new OrNotNestedAnalyzer(), new MissingIndexAnalyzer(), new NotDeclaredAttributesAnalyzer(),
             new NotIndexedSortAnalyzer(), new RelationDistantKeyAnalyzer(), new LikeWithoutWildcardAnalyzer(),
             new QueryOptimisationAnalyser(), new WriteAttributesAnalyzer(),

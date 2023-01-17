@@ -7,6 +7,8 @@ use DateTime;
 
 /**
  * Factory for the TimeInstant implementation
+ *
+ * @implements ReportInstantFactory<TimeInstant>
  */
 final class TimeInstantFactory implements ReportInstantFactory
 {
