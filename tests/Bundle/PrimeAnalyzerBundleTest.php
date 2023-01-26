@@ -10,6 +10,8 @@ use Bdf\Prime\Analyzer\Testing\DumpFormat\ConsoleDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\DiffDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\HtmlDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\StorageDumpFormat;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\Trace\HtmlTraceDumpFormat;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\Trace\JsonTraceDumpFormat;
 use PHPUnit\Framework\TestCase;
 
 class PrimeAnalyzerBundleTest extends TestCase
@@ -58,6 +60,8 @@ class PrimeAnalyzerBundleTest extends TestCase
         $this->assertEquals([
             new ConsoleDumpFormat(),
             new HtmlDumpFormat($baseDir . '/dump.html'),
+            new JsonTraceDumpFormat($baseDir . '/trace.json'),
+            new HtmlTraceDumpFormat($baseDir . '/trace.html'),
             new StorageDumpFormat(
                 new FileReportStorage($baseDir . '/'),
                 new DummyInstantFactory(),

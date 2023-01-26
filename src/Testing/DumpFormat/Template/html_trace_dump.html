@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prime call trace</title>
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 2px 5px;
+        }
+
+        .function-name {
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        td.function-name {
+            padding-left: calc(var(--call-level, 0) * 10px);
+        }
+
+        .class-name {
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    {{body}}
+
+    <script lang="javascript">
+        function hideAllChildren(id) {
+            document.querySelectorAll('tr[data-parent-id="' + id + '"]').forEach(function (child) {
+                child.style.display = 'none';
+                hideAllChildren(child.getAttribute('id'));
+            });
+        }
+
+        document.querySelectorAll('tr').forEach(function (tr) {
+            if (tr.dataset.parentId) {
+                tr.style.display = 'none';
+            }
+
+            tr.addEventListener('click', function () {
+                document.querySelectorAll('tr[data-parent-id="' + tr.getAttribute('id') + '"]').forEach(function (child) {
+                    if (child.style.display !== 'none') {
+                        child.style.display = 'none';
+                        hideAllChildren(child.getAttribute('id'));
+                    } else {
+                        child.style.display = 'table-row';
+                    }
+                });
+            });
+        });
+    </script>
+</body>

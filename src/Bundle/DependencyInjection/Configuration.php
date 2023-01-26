@@ -49,9 +49,11 @@ final class Configuration implements ConfigurationInterface
 
         $dumpFormatsNode
             ->children()
-            ->enumNode('type')->values(['html', 'storage', 'console'])->defaultNull()->end()
+            ->enumNode('type')->values(['html', 'storage', 'console', 'json', 'html_trace'])->defaultNull()->end()
             ->booleanNode('diff')->defaultFalse()->end()
             ->scalarNode('html')->defaultNull()->end()
+            ->scalarNode('json')->defaultNull()->end()
+            ->scalarNode('html_trace')->defaultNull()->end()
             ->append($this->getStorageDumpNode())
             ->end()
         ;
