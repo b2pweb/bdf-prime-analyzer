@@ -58,6 +58,14 @@ class HtmlTraceDumpFormatTest extends AnalyzerTestCase
 
         $content = file_get_contents($this->file);
         $this->assertStringContainsString('HtmlTraceDumpFormatTest-&gt;test_dump', strip_tags($content));
+        $this->assertStringContainsString(<<<'SQL'
+SELECT
+  t0.*
+FROM
+  test_entity t0
+WHERE
+  t0._key = ?
+SQL, strip_tags($content));
         $this->assertStringContainsString('TestEntity (x5)', strip_tags($content));
     }
 }

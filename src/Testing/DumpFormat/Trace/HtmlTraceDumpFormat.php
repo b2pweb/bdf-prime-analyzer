@@ -4,8 +4,12 @@ namespace Bdf\Prime\Analyzer\Testing\DumpFormat\Trace;
 
 use Bdf\Prime\Analyzer\Testing\DumpFormat\DumpFormatInterface;
 
+use Doctrine\SqlFormatter\HtmlHighlighter;
+use Doctrine\SqlFormatter\SqlFormatter;
+
 use function explode;
 use function file_get_contents;
+use function implode;
 use function str_contains;
 use function strrchr;
 use function strtr;
@@ -16,8 +20,11 @@ use function substr;
  */
 final class HtmlTraceDumpFormat implements DumpFormatInterface
 {
+    private SqlFormatter $formatter;
+
     public function __construct(private string $filename)
     {
+        $this->formatter = new SqlFormatter(new HtmlHighlighter());
     }
 
     /**
@@ -69,11 +76,17 @@ HTML;
     private function renderTrace(Trace $trace, int $totalCalls, int $meanCalls, int $level = 0, ?string $parentId = null): string
     {
         $id = spl_object_hash($trace);
+
         $row = <<<HTML
         <tr id="{$id}" data-parent-id="{$parentId}">
             <td>{$level}</td>
             <td class="function-name" style="--call-level: {$level}">{$this->renderFunctionName($trace->function())}</td>
-            <td>{$trace->calls()} <meter max="{$totalCalls}" high="{$meanCalls}" value="{$trace->calls()}"></meter></td>
+            <td>
+                <details>
+                    <summary>{$trace->calls()} <meter max="{$totalCalls}" high="{$meanCalls}" value="{$trace->calls()}"></meter></summary>
+                    <pre>{$this->renderQueries($trace->queries())}</pre>
+                </details>
+            </td>
             <td>{$this->renderCallsByEntity($trace->callsByEntity())}</td>
         </tr>
         HTML;
@@ -140,5 +153,23 @@ HTML;
         }
 
         return $function;
+    }
+
+    /**
+     * Render SQL queries to highlight them
+     *
+     * @param list<string> $queries
+     *
+     * @return string
+     */
+    public function renderQueries(array $queries): string
+    {
+        $out = [];
+
+        foreach ($queries as $query) {
+            $out[] = $this->formatter->format($query);
+        }
+
+        return implode('<br />', $out);
     }
 }

@@ -39,12 +39,12 @@
             });
         }
 
-        document.querySelectorAll('tr').forEach(function (tr) {
+        document.querySelectorAll('tbody tr').forEach(function (tr) {
             if (tr.dataset.parentId) {
                 tr.style.display = 'none';
             }
 
-            tr.addEventListener('click', function () {
+            tr.querySelector('td.function-name').addEventListener('click', function () {
                 document.querySelectorAll('tr[data-parent-id="' + tr.getAttribute('id') + '"]').forEach(function (child) {
                     if (child.style.display !== 'none') {
                         child.style.display = 'none';

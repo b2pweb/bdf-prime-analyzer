@@ -29,6 +29,13 @@ final class Trace implements JsonSerializable
     private array $calling = [];
 
     /**
+     * Executed SQL queries
+     *
+     * @var array<string, string>
+     */
+    private array $queries = [];
+
+    /**
      * @param string $function
      */
     public function __construct(string $function = '{main}')
@@ -79,6 +86,16 @@ final class Trace implements JsonSerializable
     }
 
     /**
+     * Get all executed SQL queries
+     *
+     * @return list<string>
+     */
+    public function queries(): array
+    {
+        return array_values($this->queries);
+    }
+
+    /**
      * Parse report stack trace and push it to the trace
      *
      * @param Report $report
@@ -90,6 +107,10 @@ final class Trace implements JsonSerializable
 
         $currentTrace = $this;
         $currentTrace->calls += $report->calls();
+
+        foreach ($report->queries() as $query) {
+            $this->queries[$query] = $query;
+        }
 
         if ($entity) {
             $currentTrace->callsByEntity[$entity] = ($currentTrace->callsByEntity[$entity] ?? 0) + $report->calls();
@@ -106,6 +127,10 @@ final class Trace implements JsonSerializable
 
             $currentTrace->calls += $report->calls();
 
+            foreach ($report->queries() as $query) {
+                $currentTrace->queries[$query] = $query;
+            }
+
             if ($entity) {
                 $currentTrace->callsByEntity[$entity] = ($currentTrace->callsByEntity[$entity] ?? 0) + $report->calls();
             }
@@ -121,6 +146,7 @@ final class Trace implements JsonSerializable
             'function' => $this->function,
             'calls' => $this->calls,
             'callsByEntity' => $this->callsByEntity,
+            'queries' => array_values($this->queries),
             'calling' => array_values($this->calling),
         ];
     }

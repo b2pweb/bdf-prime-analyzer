@@ -14,7 +14,7 @@ use Bdf\Prime\Analyzer\Testing\DumpFormat\Trace\Trace;
 use Bdf\Prime\Query\Query;
 use Bdf\Util\Arr;
 
-class JsonDumpFormatTest extends AnalyzerTestCase
+class JsonTraceDumpFormatTest extends AnalyzerTestCase
 {
     /**
      * @var string
@@ -69,26 +69,40 @@ class JsonDumpFormatTest extends AnalyzerTestCase
         $currentTrace = $this->searchFunctionRecursive($data, self::class.'->test_dump');
 
         $this->assertSame([
-            'function' => 'Bdf\\Prime\\Analyzer\\Testing\\DumpFormat\\JsonDumpFormatTest->test_dump',
+            'function' => 'Bdf\\Prime\\Analyzer\\Testing\\DumpFormat\\JsonTraceDumpFormatTest->test_dump',
             'calls' => 5,
             'callsByEntity' => ['AnalyzerTest\\TestEntity' => 5],
+            'queries' => [
+                'SELECT t0.* FROM test_entity t0',
+                'SELECT t0.* FROM test_entity t0 WHERE _value = ? LIMIT 1',
+                'SELECT t0.* FROM test_entity t0 WHERE t0._key = ?',
+            ],
             'calling' => [
                 [
                     'function' => 'Bdf\\Prime\\Entity\\Model::__callStatic',
                     'calls' => 1,
                     'callsByEntity' => ['AnalyzerTest\\TestEntity' => 1],
+                    'queries' => [
+                        'SELECT t0.* FROM test_entity t0',
+                    ],
                     'calling' => [],
                 ],
                 [
                     'function' => 'Bdf\\Prime\\Query\\AbstractReadCommand->first',
                     'calls' => 1,
                     'callsByEntity' => ['AnalyzerTest\\TestEntity' => 1],
+                    'queries' => [
+                        'SELECT t0.* FROM test_entity t0 WHERE _value = ? LIMIT 1',
+                    ],
                     'calling' => [],
                 ],
                 [
                     'function' => 'Bdf\\Prime\\Query\\AbstractReadCommand->all',
                     'calls' => 3,
                     'callsByEntity' => ['AnalyzerTest\\TestEntity' => 3],
+                    'queries' => [
+                        'SELECT t0.* FROM test_entity t0 WHERE t0._key = ?',
+                    ],
                     'calling' => [],
                 ],
             ],

@@ -48,6 +48,11 @@ class TraceTest extends AnalyzerTestCase
             TestEntity::class => 1,
             TestEntityWithAnalysisOptions::class => 2,
         ], $trace->callsByEntity());
+        $this->assertSame([
+            'SELECT t0.* FROM test_entity t0 LIMIT 1',
+            'SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1',
+            'SELECT * FROM foo',
+        ], $trace->queries());
 
         $this->assertSame('include', $trace->calling()[0]->function());
         $this->assertSame('PHPUnit\TextUI\Command::main', $trace->calling()[0]->calling()[0]->function());
@@ -59,6 +64,11 @@ class TraceTest extends AnalyzerTestCase
             TestEntity::class => 1,
             TestEntityWithAnalysisOptions::class => 2,
         ], $currentMethodTrace->callsByEntity());
+        $this->assertSame([
+            'SELECT t0.* FROM test_entity t0 LIMIT 1',
+            'SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1',
+            'SELECT * FROM foo',
+        ], $currentMethodTrace->queries());
 
         $serviceActionTrace = $this->searchFunctionRecursive($currentMethodTrace, MyService::class.'->action');
 
@@ -67,6 +77,10 @@ class TraceTest extends AnalyzerTestCase
             TestEntity::class => 1,
             TestEntityWithAnalysisOptions::class => 1,
         ], $serviceActionTrace->callsByEntity());
+        $this->assertSame([
+            'SELECT t0.* FROM test_entity t0 LIMIT 1',
+            'SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1',
+        ], $serviceActionTrace->queries());
 
         $serviceAction2Trace = $this->searchFunctionRecursive($currentMethodTrace, MyService::class.'->action2');
 
@@ -74,6 +88,9 @@ class TraceTest extends AnalyzerTestCase
         $this->assertSame([
             TestEntityWithAnalysisOptions::class => 1,
         ], $serviceAction2Trace->callsByEntity());
+        $this->assertSame([
+            'SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1',
+        ], $serviceAction2Trace->queries());
 
         $this->assertEquals(<<<'JSON'
 {
@@ -83,6 +100,11 @@ class TraceTest extends AnalyzerTestCase
         "AnalyzerTest\\TestEntity": 1,
         "AnalyzerTest\\TestEntityWithAnalysisOptions": 2
     },
+    "queries": [
+        "SELECT t0.* FROM test_entity t0 LIMIT 1",
+        "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1",
+        "SELECT * FROM foo"
+    ],
     "calling": [
         {
             "function": "Testing\\DumpFormat\\MyService->action",
@@ -91,6 +113,10 @@ class TraceTest extends AnalyzerTestCase
                 "AnalyzerTest\\TestEntity": 1,
                 "AnalyzerTest\\TestEntityWithAnalysisOptions": 1
             },
+            "queries": [
+                "SELECT t0.* FROM test_entity t0 LIMIT 1",
+                "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1"
+            ],
             "calling": [
                 {
                     "function": "Bdf\\Prime\\Entity\\Model::__callStatic",
@@ -98,6 +124,9 @@ class TraceTest extends AnalyzerTestCase
                     "callsByEntity": {
                         "AnalyzerTest\\TestEntity": 1
                     },
+                    "queries": [
+                        "SELECT t0.* FROM test_entity t0 LIMIT 1"
+                    ],
                     "calling": []
                 },
                 {
@@ -106,6 +135,9 @@ class TraceTest extends AnalyzerTestCase
                     "callsByEntity": {
                         "AnalyzerTest\\TestEntityWithAnalysisOptions": 1
                     },
+                    "queries": [
+                        "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1"
+                    ],
                     "calling": [
                         {
                             "function": "Bdf\\Prime\\Entity\\Model::__callStatic",
@@ -113,6 +145,9 @@ class TraceTest extends AnalyzerTestCase
                             "callsByEntity": {
                                 "AnalyzerTest\\TestEntityWithAnalysisOptions": 1
                             },
+                            "queries": [
+                                "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1"
+                            ],
                             "calling": []
                         }
                     ]
@@ -125,6 +160,9 @@ class TraceTest extends AnalyzerTestCase
             "callsByEntity": {
                 "AnalyzerTest\\TestEntityWithAnalysisOptions": 1
             },
+            "queries": [
+                "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1"
+            ],
             "calling": [
                 {
                     "function": "Bdf\\Prime\\Entity\\Model::__callStatic",
@@ -132,6 +170,9 @@ class TraceTest extends AnalyzerTestCase
                     "callsByEntity": {
                         "AnalyzerTest\\TestEntityWithAnalysisOptions": 1
                     },
+                    "queries": [
+                        "SELECT t0.* FROM TestEntityWithAnalysisOptions t0 LIMIT 1"
+                    ],
                     "calling": []
                 }
             ]
@@ -140,6 +181,9 @@ class TraceTest extends AnalyzerTestCase
             "function": "Bdf\\Prime\\Query\\AbstractReadCommand->all",
             "calls": 1,
             "callsByEntity": [],
+            "queries": [
+                "SELECT * FROM foo"
+            ],
             "calling": []
         }
     ]
