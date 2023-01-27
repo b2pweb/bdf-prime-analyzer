@@ -78,7 +78,7 @@ HTML;
         $id = spl_object_hash($trace);
 
         $row = <<<HTML
-        <tr id="{$id}" data-parent-id="{$parentId}">
+        <tr id="{$id}" data-parent-id="{$parentId}" data-function-name="{$trace->function()}">
             <td>{$level}</td>
             <td class="function-name" style="--call-level: {$level}">{$this->renderFunctionName($trace->function())}</td>
             <td>
@@ -87,7 +87,7 @@ HTML;
                     <pre>{$this->renderQueries($trace->queries())}</pre>
                 </details>
             </td>
-            <td>{$this->renderCallsByEntity($trace->callsByEntity())}</td>
+            <td class="calls-by-entity">{$this->renderCallsByEntity($trace->callsByEntity())}</td>
         </tr>
         HTML;
 
