@@ -4,6 +4,7 @@ namespace Bdf\Prime\Analyzer\Testing\DumpFormat;
 
 use Bdf\Collection\Stream\Collector\Joining;
 use Bdf\Collection\Stream\Streams;
+use Bdf\Prime\Analyzer\Report;
 
 /**
  * Dump the report in an HTML file
@@ -38,6 +39,8 @@ final class HtmlDumpFormat implements DumpFormatInterface
 
 HTML
 );
+
+        $reports = array_filter($reports, fn (Report $report) => !empty($report->errors()));
 
         if (empty($reports)) {
             fwrite($file, 'No prime reports');

@@ -10,6 +10,7 @@ use Doctrine\SqlFormatter\SqlFormatter;
 use function explode;
 use function file_get_contents;
 use function implode;
+use function max;
 use function str_contains;
 use function strrchr;
 use function strtr;
@@ -46,7 +47,7 @@ final class HtmlTraceDumpFormat implements DumpFormatInterface
         </tr>
     </thead>
     <tbody>
-        {$this->renderTrace($trace, $trace->calls(), (int) ($trace->calls() / count($trace->calling())))}
+        {$this->renderTrace($trace, $trace->calls(), (int) ($trace->calls() / max(count($trace->calling()), 1)))}
     </tbody>
 </table>
 HTML;

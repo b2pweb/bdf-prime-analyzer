@@ -2,6 +2,9 @@
 
 namespace Bdf\Prime\Analyzer\Testing\DumpFormat;
 
+use Bdf\Prime\Analyzer\Report;
+
+use function array_filter;
 use function count;
 use function function_exists;
 use function posix_isatty;
@@ -16,6 +19,8 @@ final class ConsoleDumpFormat implements DumpFormatInterface
      */
     public function dump(array $reports): void
     {
+        $reports = array_filter($reports, fn (Report $report) => !empty($report->errors()));
+
         if (empty($reports)) {
             $this->stdout("No prime reports");
             return;
