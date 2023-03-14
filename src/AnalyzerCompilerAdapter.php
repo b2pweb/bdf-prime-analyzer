@@ -12,6 +12,10 @@ use Bdf\Prime\Query\Compiler\QuoteCompilerInterface;
 use Bdf\Prime\Query\Compiler\SelectCompilerInterface;
 use Bdf\Prime\Query\Compiler\UpdateCompilerInterface;
 
+use Doctrine\DBAL\Statement;
+
+use function is_string;
+
 /**
  * Adapt for CompilerInterface for perform query analysis
  *
@@ -39,9 +43,15 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
             throw new BadMethodCallException();
         }
 
-        $this->analyze($query);
+        $report = $this->analyze($query);
+        $query = $compiler->compileInsert($query);
+        $sql = $this->getSql($query);
 
-        return $compiler->compileInsert($query);
+        if ($report && $sql) {
+            $report->addQuery($sql);
+        }
+
+        return $query;
     }
 
     /**
@@ -55,9 +65,15 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
             throw new BadMethodCallException();
         }
 
-        $this->analyze($query);
+        $report = $this->analyze($query);
+        $query = $compiler->compileUpdate($query);
+        $sql = $this->getSql($query);
 
-        return $compiler->compileUpdate($query);
+        if ($report && $sql) {
+            $report->addQuery($sql);
+        }
+
+        return $query;
     }
 
     /**
@@ -71,9 +87,15 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
             throw new BadMethodCallException();
         }
 
-        $this->analyze($query);
+        $report = $this->analyze($query);
+        $query = $compiler->compileDelete($query);
+        $sql = $this->getSql($query);
 
-        return $compiler->compileDelete($query);
+        if ($report && $sql) {
+            $report->addQuery($sql);
+        }
+
+        return $query;
     }
 
     /**
@@ -87,9 +109,15 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
             throw new BadMethodCallException();
         }
 
-        $this->analyze($query);
+        $report = $this->analyze($query);
+        $query = $compiler->compileSelect($query);
+        $sql = $this->getSql($query);
 
-        return $compiler->compileSelect($query);
+        if ($report && $sql) {
+            $report->addQuery($sql);
+        }
+
+        return $query;
     }
 
     /**
@@ -136,11 +164,37 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
         return $this->compiler->getBindings($query);
     }
 
-    private function analyze(CompilableClause $query): void
+    private function analyze(CompilableClause $query): ?Report
     {
         if ($report = $this->service->createReport($this->analyzer->entity($query))) {
             $this->analyzer->analyze($report, $query);
-            $this->service->push($report);
+            return $this->service->push($report);
         }
+
+        return null;
+    }
+
+    /**
+     * Get the SQL query from a compiled statement
+     *
+     * @param mixed $query
+     *
+     * @return string|null
+     *
+     * @psalm-suppress PossiblyInvalidFunctionCall
+     * @psalm-suppress InaccessibleProperty
+     * @psalm-suppress PossiblyNullFunctionCall
+     */
+    private function getSql($query): ?string
+    {
+        if ($query instanceof Statement) {
+            $query = (static fn (): string => $query->sql)->bindTo(null, Statement::class)();
+        }
+
+        if (is_string($query)) {
+            return $query;
+        }
+
+        return null;
     }
 }

@@ -52,6 +52,7 @@ class FunctionalTest extends AnalyzerTestCase
         $this->assertContains('Suspicious N+1 or loop query', $report->errors());
         $this->assertEquals(__FILE__, $report->file());
         $this->assertEquals(44, $report->line());
+        $this->assertSame(['SELECT t0.* FROM test_entity t0 WHERE t0.id = ? LIMIT 1'], $report->queries());
     }
 
     /**
@@ -70,7 +71,8 @@ class FunctionalTest extends AnalyzerTestCase
         $this->assertEmpty($report->errors());
         $this->assertEmpty($report->errorsByType());
         $this->assertEquals(__FILE__, $report->file());
-        $this->assertEquals(63, $report->line());
+        $this->assertEquals(64, $report->line());
+        $this->assertSame(['SELECT * FROM relation_entity WHERE key = ?'], $report->queries());
     }
 
     /**
@@ -114,7 +116,8 @@ class FunctionalTest extends AnalyzerTestCase
             AnalysisTypes::INDEX => ['Query without index. Consider adding an index, or filter on an indexed field.' => 'Query without index. Consider adding an index, or filter on an indexed field.']
         ], $report->errorsByType());
         $this->assertEquals(1, $report->line());
-        $this->assertEquals(__FILE__."(107) : eval()'d code", $report->file());
+        $this->assertEquals(__FILE__."(109) : eval()'d code", $report->file());
+        $this->assertEquals(['SELECT t0.* FROM test_entity t0 WHERE _value = ? LIMIT 1'], $report->queries());
     }
 
     /**

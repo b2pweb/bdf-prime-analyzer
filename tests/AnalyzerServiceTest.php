@@ -89,8 +89,8 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         $r1 = $this->createReport(__FILE__, 12, ['stack1']);
         $r2 = $this->createReport('otherfile.php', 12, ['stack2']);
 
-        $this->service->push($r1);
-        $this->service->push($r2);
+        $this->assertSame($r1, $this->service->push($r1));
+        $this->assertSame($r2, $this->service->push($r2));
 
         $this->assertEquals([$r1, $r2], $this->service->reports());
     }
@@ -131,8 +131,8 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         $r2 = $this->createReport(__FILE__, 12, ['stack1']);
         $r2->addError('type', 'error 2');
 
-        $this->service->push($r1);
-        $this->service->push($r2);
+        $this->assertSame($r1, $this->service->push($r1));
+        $this->assertSame($r1, $this->service->push($r2));
 
         $this->assertEquals([$r1], $this->service->reports());
         $this->assertEquals(['error 1', 'error 2', 'Suspicious N+1 or loop query'], $r1->errors());

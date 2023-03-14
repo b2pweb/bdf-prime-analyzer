@@ -66,8 +66,9 @@ class AnalyzerService
      * Add a new analysis report
      *
      * @param Report $report
+     * @return Report The actual report, which may be the same as the given report, or a merged report
      */
-    public function push(Report $report): void
+    public function push(Report $report): Report
     {
         /** @psalm-suppress MixedAssignment */
         if ($savedReport = $this->reports->lookup($report)->get()) {
@@ -89,6 +90,8 @@ class AnalyzerService
                 throw new RuntimeException('Query analysis error: '.implode(', ', $errors));
             }
         }
+
+        return $report;
     }
 
     /**

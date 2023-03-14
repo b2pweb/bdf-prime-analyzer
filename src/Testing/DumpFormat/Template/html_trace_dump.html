@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Prime call trace</title>
+    <style>
+        body {
+            background-color: #333333;
+            color: #dddddd;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 2px 5px;
+        }
+
+        th {
+            background-color: #666;
+        }
+
+        .function-name {
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        td.function-name {
+            padding-left: calc(var(--call-level, 0) * 10px);
+        }
+
+        .class-name {
+            font-family: monospace;
+        }
+
+        #search {
+            width: 100%;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            background-color: #666666;
+            border: 1px solid #111;
+            color: #dddddd;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <input type="text" id="search" placeholder="Search function or entity" />
+
+    {{body}}
+
+    <script lang="javascript">
+        class TraceRow {
+            constructor(element) {
+                this.element = element;
+            }
+
+            /**
+             * @returns {string}
+             */
+            get id() {
+                return this.element.getAttribute('id');
+            }
+
+            /**
+             * @returns {string}
+             */
+            get parentId() {
+                return this.element.dataset.parentId;
+            }
+
+            /**
+             * @returns {boolean}
+             */
+            get isRoot() {
+                return !this.element.dataset.parentId;
+            }
+
+            /**
+             * @returns {boolean}
+             */
+            get isHidden() {
+                return this.element.style.display === 'none';
+            }
+
+            /**
+             * @returns {TraceRow[]}
+             */
+            get children() {
+                return TraceTable.byParentId(this.id);
+            }
+
+            /**
+             * @returns {string}
+             */
+            get functionName() {
+                return this.element.dataset.functionName;
+            }
+
+            /**
+             * @returns {string[]}
+             */
+            get entities() {
+                const entities = [];
+
+                this.element.querySelectorAll('td.calls-by-entity .class-name').forEach(element => {
+                    entities.push(element.getAttribute('title'));
+                });
+
+                return entities;
+            }
+
+            /**
+             * @returns {Element}
+             */
+            get functionNameElement() {
+                return this.element.querySelector('td.function-name');
+            }
+
+            hide(recursive = false) {
+                if (this.isHidden) {
+                    return;
+                }
+
+                this.element.style.display = 'none';
+
+                if (recursive) {
+                    TraceTable.byParentId(this.id).forEach(row => row.hide(true));
+                }
+            }
+
+            show() {
+                this.element.style.display = 'table-row';
+            }
+        }
+
+        const TraceTable = {
+            /**
+             * @returns {TraceRow[]}
+             */
+            get rows() {
+                return [...document.querySelectorAll('tbody tr')].map(tr => new TraceRow(tr));
+            },
+
+            /**
+             * @param {String} id
+             * @returns {TraceRow[]}
+             */
+            byParentId(id) {
+                return [...document.querySelectorAll('tr[data-parent-id="' + id + '"]')].map(tr => new TraceRow(tr));
+            },
+
+            hideAll() {
+                document.querySelectorAll('tbody tr').forEach(tr => tr.style.display = 'none');
+            },
+
+            init() {
+                TraceTable.rows.forEach(row => {
+                    if (!row.isRoot) {
+                        row.hide();
+                    }
+
+                    row.functionNameElement.addEventListener('click', () => {
+                        row.children.forEach(child => {
+                            if (child.isHidden) {
+                                child.show();
+                            } else {
+                                child.hide(true);
+                            }
+                        });
+                    });
+                });
+            }
+        };
+
+        const Search = {
+            input: document.getElementById('search'),
+
+            /**
+             * @type {Object.<string, TraceRow[]>}
+             */
+            rowsByFunctionName: {},
+
+            /**
+             * @type {Object.<string, TraceRow[]>}
+             */
+            rowsByEntityClass: {},
+
+            init() {
+                TraceTable.rows.forEach(row => {
+                    const functionName = row.functionName.toLocaleLowerCase();
+
+                    if (!(functionName in this.rowsByFunctionName)) {
+                        this.rowsByFunctionName[functionName] = [];
+                    }
+
+                    this.rowsByFunctionName[functionName].push(row);
+
+                    row.entities.forEach(entityClass => {
+                        entityClass = entityClass.toLocaleLowerCase();
+
+                        if (!(entityClass in this.rowsByEntityClass)) {
+                            this.rowsByEntityClass[entityClass] = [];
+                        }
+
+                        this.rowsByEntityClass[entityClass].push(row);
+                    });
+                });
+
+                this.input.addEventListener('input', () => this.search(this.input.value));
+            },
+
+            search(input) {
+                const search = input.toLocaleLowerCase();
+
+                TraceTable.hideAll();
+
+                for (const functionName in this.rowsByFunctionName) {
+                    const rows = this.rowsByFunctionName[functionName];
+
+                    if (functionName.includes(search)) {
+                        rows.forEach(row => row.show());
+                    }
+                }
+
+                for (const entityClass in this.rowsByEntityClass) {
+                    const rows = this.rowsByEntityClass[entityClass];
+
+                    if (entityClass.includes(search)) {
+                        rows.forEach(row => row.show());
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('load', () => {
+            TraceTable.init();
+            Search.init();
+        });
+    </script>
+</body>

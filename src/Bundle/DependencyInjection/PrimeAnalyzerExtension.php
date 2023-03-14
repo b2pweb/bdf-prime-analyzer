@@ -9,6 +9,8 @@ use Bdf\Prime\Analyzer\Testing\DumpFormat\ConsoleDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\DiffDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\HtmlDumpFormat;
 use Bdf\Prime\Analyzer\Testing\DumpFormat\StorageDumpFormat;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\Trace\HtmlTraceDumpFormat;
+use Bdf\Prime\Analyzer\Testing\DumpFormat\Trace\JsonTraceDumpFormat;
 use InvalidArgumentException;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -54,6 +56,8 @@ class PrimeAnalyzerExtension extends Extension
      *     type: string|null,
      *     diff: bool,
      *     html: string|null,
+     *     json: string|null,
+     *     html_trace: string|null,
      *     storage: null|array{
      *         instant: string,
      *         dsn: string,
@@ -68,7 +72,12 @@ class PrimeAnalyzerExtension extends Extension
         $definitionId = $baseContainerId . '.format';
 
         if (!($type = $format['type'])) {
-            $type = !empty($format['html']) ? 'html' : 'storage';
+            foreach ($format as $key => $value) {
+                if ($value !== null && !is_bool($value)) {
+                    $type = $key;
+                    break;
+                }
+            }
         }
 
         switch ($type) {
@@ -80,6 +89,20 @@ class PrimeAnalyzerExtension extends Extension
                 $definition = $container
                     ->register($definitionId, HtmlDumpFormat::class)
                     ->addArgument($format['html'])
+                ;
+                break;
+
+            case 'json':
+                $definition = $container
+                    ->register($definitionId, JsonTraceDumpFormat::class)
+                    ->addArgument($format['json'])
+                ;
+                break;
+
+            case 'html_trace':
+                $definition = $container
+                    ->register($definitionId, HtmlTraceDumpFormat::class)
+                    ->addArgument($format['html_trace'])
                 ;
                 break;
 

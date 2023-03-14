@@ -80,10 +80,6 @@ class AnalyzerReportDumper
     public function push(array $reports): void
     {
         foreach ($reports as $report) {
-            if (empty($report->errors())) {
-                continue;
-            }
-
             $key = $report->file().':'.$report->line().':'.$report->entity();
 
             if (isset($this->reports[$key])) {

@@ -20,6 +20,8 @@ prime_analyzer:
   dump_formats:
     - 'console'
     - html: '%kernel.project_dir%/var/prime_analyzer/dump.html'
+    - json: '%kernel.project_dir%/var/prime_analyzer/trace.json'
+    - html_trace: '%kernel.project_dir%/var/prime_analyzer/trace.html'
     - storage:
         instant: 'dummy'
         dsn: 'file://%kernel.project_dir%/var/prime_analyzer/'

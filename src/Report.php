@@ -14,6 +14,7 @@ use ReflectionClass;
 use function array_keys;
 use function array_replace_recursive;
 use function array_slice;
+use function array_values;
 use function debug_backtrace;
 use function dirname;
 use function str_starts_with;
@@ -60,6 +61,14 @@ final class Report implements Hashable
      * @var array<string, array<string, string>>
      */
     private array $errors = [];
+
+    /**
+     * List of executed queries
+     * The key of the sub-array is same as the value, to avoid duplication
+     *
+     * @var array<string, string>
+     */
+    private array $queries = [];
 
     /**
      * Query call count
@@ -219,6 +228,16 @@ final class Report implements Hashable
     }
 
     /**
+     * Get the list of queries
+     *
+     * @return list<string>
+     */
+    public function queries(): array
+    {
+        return array_values($this->queries);
+    }
+
+    /**
      * Add a new error into the report
      * If the error is already set, it'll be ignored
      *
@@ -231,6 +250,19 @@ final class Report implements Hashable
     }
 
     /**
+     * Add a new generated query into the report
+     * If the query is already set, it'll be ignored
+     *
+     * @param string $query The SQL query
+     *
+     * @return void
+     */
+    public function addQuery(string $query): void
+    {
+        $this->queries[$query] = $query;
+    }
+
+    /**
      * Merge a report result into the current one
      *
      * @param Report $report The report to merge
@@ -239,6 +271,7 @@ final class Report implements Hashable
     {
         $this->errors = array_replace_recursive($this->errors, $report->errors);
         $this->calls += $report->calls;
+        $this->queries += $report->queries;
     }
 
     /**
