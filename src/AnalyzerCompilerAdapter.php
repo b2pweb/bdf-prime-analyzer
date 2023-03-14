@@ -183,6 +183,7 @@ final class AnalyzerCompilerAdapter implements CompilerInterface, QuoteCompilerI
      *
      * @psalm-suppress PossiblyInvalidFunctionCall
      * @psalm-suppress InaccessibleProperty
+     * @psalm-suppress PossiblyNullFunctionCall
      */
     private function getSql($query): ?string
     {
