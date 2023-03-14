@@ -1,7 +1,6 @@
 # Prime Analyzer
 [![build](https://github.com/b2pweb/bdf-prime-analyzer/actions/workflows/php.yml/badge.svg)](https://github.com/b2pweb/bdf-prime-analyzer/actions/workflows/php.yml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/quality-score.png?b=1.0)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=1.0)
-[![Code Coverage](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/badges/coverage.png?b=1.0)](https://scrutinizer-ci.com/g/b2pweb/bdf-prime-analyzer/?branch=1.0)
+[![codecov](https://codecov.io/github/b2pweb/bdf-prime-analyzer/branch/2.0/graph/badge.svg?token=VOFSPEWYKX)](https://app.codecov.io/github/b2pweb/bdf-prime-analyzer)
 [![Packagist Version](https://img.shields.io/packagist/v/b2pweb/bdf-prime-analyzer.svg)](https://packagist.org/packages/b2pweb/bdf-prime-analyzer)
 [![Total Downloads](https://img.shields.io/packagist/dt/b2pweb/bdf-prime-analyzer.svg)](https://packagist.org/packages/b2pweb/bdf-prime-analyzer)
 [![Type Coverage](https://shepherd.dev/github/b2pweb/bdf-prime-analyzer/coverage.svg)](https://shepherd.dev/github/b2pweb/bdf-prime-analyzer)
