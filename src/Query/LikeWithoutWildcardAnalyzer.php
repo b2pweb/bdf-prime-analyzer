@@ -17,6 +17,8 @@ final class LikeWithoutWildcardAnalyzer implements RepositoryQueryErrorAnalyzerI
 {
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress PossiblyInvalidArgument
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {

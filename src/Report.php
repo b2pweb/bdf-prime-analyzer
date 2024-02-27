@@ -34,7 +34,7 @@ final class Report implements Hashable
     private ?string $entity;
 
     /**
-     * @var list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
+     * @var list<array{args?: list<mixed>, class?: class-string, file?: string, function: string, line?: int, object?: object, type?: string}>
      */
     private array $stackTrace;
 
@@ -102,8 +102,8 @@ final class Report implements Hashable
         $this->stackTrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
         $this->stackTrace = array_slice($this->stackTrace, $this->findQueryExecuteCall());
 
-        $this->file = $this->stackTrace[0]['file'];
-        $this->line = $this->stackTrace[0]['line'];
+        $this->file = $this->stackTrace[0]['file'] ?? '';
+        $this->line = $this->stackTrace[0]['line'] ?? 0;
     }
 
     /**
@@ -130,7 +130,7 @@ final class Report implements Hashable
      * Get the calling stack trace for the query execution
      * The return format is the format of debug_backtrace()
      *
-     * @return list<array{args?: list<mixed>, class?: class-string, file: string, function: string, line: int, object?: object, type?: string}>
+     * @return list<array{args?: list<mixed>, class?: class-string, file?: string, function: string, line?: int, object?: object, type?: string}>
      *
      * @see debug_backtrace()
      */
@@ -337,7 +337,7 @@ final class Report implements Hashable
      */
     private static function primeDirectory(): string
     {
-        if (self::$primeDirectory) {
+        if (self::$primeDirectory !== null) {
             return self::$primeDirectory;
         }
 

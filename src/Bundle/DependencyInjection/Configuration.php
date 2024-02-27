@@ -3,12 +3,16 @@
 namespace Bdf\Prime\Analyzer\Bundle\DependencyInjection;
 
 use Bdf\Prime\Analyzer\AnalysisTypes;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 /**
  * @psalm-suppress PossiblyUndefinedMethod
+ * @psalm-suppress UndefinedInterfaceMethod
+ * @psalm-suppress UndefinedMethod
+ * @psalm-suppress PossiblyNullReference
  */
 final class Configuration implements ConfigurationInterface
 {
@@ -61,6 +65,7 @@ final class Configuration implements ConfigurationInterface
 
     private function getStorageDumpNode(): NodeDefinition
     {
+        /** @var ArrayNodeDefinition $root */
         $root = (new TreeBuilder('storage'))->getRootNode();
 
         $root

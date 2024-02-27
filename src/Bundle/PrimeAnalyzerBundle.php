@@ -26,7 +26,8 @@ class PrimeAnalyzerBundle extends Bundle
      */
     public function boot(): void
     {
-        if (!$this->container->getParameter('prime_analyzer.enabled')) {
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
+        if (!$this->container?->getParameter('prime_analyzer.enabled')) {
             return;
         }
 
@@ -55,7 +56,8 @@ class PrimeAnalyzerBundle extends Bundle
      */
     public function shutdown(): void
     {
-        if (!$this->container->getParameter('prime_analyzer.enabled')) {
+        /** @psalm-suppress RiskyTruthyFalsyComparison */
+        if (!$this->container?->getParameter('prime_analyzer.enabled')) {
             return;
         }
 

@@ -18,6 +18,8 @@ final class MissingIndexAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
 {
     /**
      * {@inheritdoc}
+     *
+     * @psalm-suppress PossiblyInvalidArgument
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {

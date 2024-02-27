@@ -26,7 +26,7 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
             ->filter(function ($condition) { return isset($condition['column']); })
             ->mapKey(function ($condition): string { return $condition['column']; })
             ->map(function ($condition) use($repository) { return $this->relationLocalKey($repository, $condition['column']); })
-            ->filter(function ($localKey) { return !empty($localKey); })
+            ->filter(function ($localKey) { return $localKey !== null && $localKey !== ''; })
             ->map(function($local, $distant) { return 'Use of relation distant key "'.$distant.'" which can cause an unnecessary join. Prefer use the local key "'.$local.'"'; })
             ->toArray(false)
         ;

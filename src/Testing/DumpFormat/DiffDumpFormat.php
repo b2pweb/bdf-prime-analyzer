@@ -97,7 +97,7 @@ final class DiffDumpFormat implements DumpFormatInterface
             unset($item['object']);
 
             // Normalize file name : set path to same root
-            if (isset($item['file']) && $this->lastRootPath && $this->currentRootPath) {
+            if (isset($item['file']) && $this->lastRootPath !== null && $this->currentRootPath !== null) {
                 $item['file'] = str_replace($this->lastRootPath, $this->currentRootPath, $item['file']);
             }
         }
@@ -119,11 +119,14 @@ final class DiffDumpFormat implements DumpFormatInterface
             $trace = $report->stackTrace();
 
             foreach ($trace as $i => $item) {
-                // Fin a valid class to get a comparison point
+                /** @psalm-suppress InvalidArrayOffset */
+                $previous = $trace[$i - 1] ?? null;
+
+                // Find a valid class to get a comparison point
                 /** @psalm-suppress RedundantConditionGivenDocblockType */
-                if ($i > 0 && isset($item['class']) && class_exists($item['class']) && isset($trace[$i - 1]['file'])) {
+                if ($i > 0 && isset($item['class']) && class_exists($item['class']) && isset($previous['file'])) {
                     // Because file and line represent the caller, the called class is on the previous item
-                    $reportClassFilename = $trace[$i - 1]['file'];
+                    $reportClassFilename = $previous['file'];
                     // Get file name of the corresponding class on the current runtime
                     $currentClassFilename = realpath((new ReflectionClass($item['class']))->getFileName());
 

@@ -78,7 +78,7 @@ HTML
                         ->map(function (array $trace, $key) {
                             $out = '#'.$key.' ';
 
-                            if (isset($trace['file'])) {
+                            if (isset($trace['file'], $trace['line'])) {
                                 $out .= $trace['file'].':'.$trace['line'];
                             } else {
                                 $out .= '[internal]';

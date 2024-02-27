@@ -66,9 +66,10 @@ class PrimeAnalyzerExtension extends Extension
     private function configureSingleDumpFormat(string $baseContainerId, array $format, ContainerBuilder $container): Definition
     {
         $definitionId = $baseContainerId . '.format';
+        $type = $format['type'];
 
-        if (!($type = $format['type'])) {
-            $type = !empty($format['html']) ? 'html' : 'storage';
+        if ($type === null || $type === '') {
+            $type = !isset($format['html']) || $format['html'] === '' ? 'html' : 'storage';
         }
 
         switch ($type) {

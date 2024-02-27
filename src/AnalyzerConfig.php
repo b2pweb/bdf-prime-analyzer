@@ -59,14 +59,14 @@ final class AnalyzerConfig
     {
         $path = realpath($path);
 
-        if (!$path) {
+        if ($path === false) {
             return false;
         }
 
         foreach ($this->ignoredPath as $ignoredPath) {
             $ignoredPath = realpath($ignoredPath);
 
-            if ($ignoredPath && str_starts_with($path, $ignoredPath)) {
+            if ($ignoredPath !== false && str_starts_with($path, $ignoredPath)) {
                 return true;
             }
         }
