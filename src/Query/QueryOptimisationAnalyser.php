@@ -117,8 +117,11 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
         /** @var object $extension */
         $extension = $this->extensionProperty->getValue($query);
 
+        /** @var object $extension */
+        $emptyExtension = $this->extensionProperty->getValue($repository->queries()->builder());
+
         // The query extension must be empty
-        return $extension == new QueryRepositoryExtension($repository);
+        return $extension == $emptyExtension;
     }
 
     /**
