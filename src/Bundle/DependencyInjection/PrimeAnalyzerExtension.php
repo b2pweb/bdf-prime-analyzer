@@ -69,7 +69,7 @@ class PrimeAnalyzerExtension extends Extension
         $type = $format['type'];
 
         if ($type === null || $type === '') {
-            $type = !isset($format['html']) || $format['html'] === '' ? 'html' : 'storage';
+            $type = isset($format['html']) && $format['html'] !== '' ? 'html' : 'storage';
         }
 
         switch ($type) {
