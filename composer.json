@@ -31,6 +31,9 @@
         "phpunit/phpunit": "~7.0|~8.0",
         "vimeo/psalm": "~4.7"
     },
+    "conflict": {
+        "phpdocumentor/reflection-docblock": ">=5.3"
+    },
     "suggest": {
         "b2p/bdf-web": "For use service provider (~1.8)"
     },
