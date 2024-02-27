@@ -32,3 +32,8 @@ prime_analyzer:
 services:
   logger:
     class: 'Psr\Log\NullLogger'
+
+  AnalyzerTest\Bundle\:
+    resource: './*'
+    autowire: true
+    autoconfigure: true
