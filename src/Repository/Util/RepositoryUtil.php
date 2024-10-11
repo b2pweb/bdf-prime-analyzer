@@ -56,6 +56,8 @@ class RepositoryUtil
      * @param string $field
      *
      * @return bool
+     *
+     * @psalm-suppress UndefinedDocblockClass
      */
     public function isIndexed(string $field): bool
     {

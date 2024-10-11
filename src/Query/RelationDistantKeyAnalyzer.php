@@ -47,6 +47,8 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
      * @param string $fieldName The filter to check
      *
      * @return string|null The related local key if applicable
+     *
+     * @psalm-suppress InvalidArrayAccess
      */
     private function relationLocalKey(RepositoryInterface $repository, string $fieldName): ?string
     {
@@ -63,6 +65,7 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
         }
 
         try {
+            /** @psalm-suppress ArgumentTypeCoercion */
             $relation = $repository->mapper()->relation($parts[0]);
         } catch (RelationNotFoundException $e) {
             return null;

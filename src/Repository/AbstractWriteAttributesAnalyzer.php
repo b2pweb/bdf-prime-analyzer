@@ -80,6 +80,8 @@ abstract class AbstractWriteAttributesAnalyzer implements RepositoryQueryErrorAn
      * @param array<string, mixed> $values
      *
      * @return StreamInterface<non-falsy-string, mixed>
+     *
+     * @psalm-suppress UndefinedDocblockClass
      */
     private function analyseType(Metadata $metadata, array $values): StreamInterface
     {
