@@ -17,6 +17,7 @@ final class NotDeclaredAttributesAnalyzer implements RepositoryQueryErrorAnalyze
 {
     /**
      * {@inheritdoc}
+     * @psalm-suppress RiskyTruthyFalsyComparison
      */
     public function analyze(RepositoryInterface $repository, CompilableClause $query, array $parameters = []): array
     {

@@ -63,6 +63,7 @@ final class RelationDistantKeyAnalyzer implements RepositoryQueryErrorAnalyzerIn
         }
 
         try {
+            /** @psalm-suppress ArgumentTypeCoercion */
             $relation = $repository->mapper()->relation($parts[0]);
         } catch (RelationNotFoundException $e) {
             return null;
