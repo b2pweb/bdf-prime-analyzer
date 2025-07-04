@@ -32,7 +32,7 @@
         "vimeo/psalm": "~4.7"
     },
     "conflict": {
-        "phpdocumentor/reflection-docblock": ">=5.3"
+        "phpdocumentor/reflection-docblock": "~5.3.0"
     },
     "suggest": {
         "b2p/bdf-web": "For use service provider (~1.8)"
