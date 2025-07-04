@@ -90,7 +90,7 @@ HTML
                             $out = '#'.$key.' ';
 
                             if (isset($trace['file'])) {
-                                $out .= $trace['file'].':'.$trace['line'];
+                                $out .= $trace['file'].':'.($trace['line'] ?? 0);
                             } else {
                                 $out .= '[internal]';
                             }

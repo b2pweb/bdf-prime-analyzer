@@ -23,7 +23,7 @@ final class InsertValuesAnalyzer implements RepositoryQueryErrorAnalyzerInterfac
         $errors = [];
 
         foreach ($query->statements['values'] as $values) {
-            $analyzer = new class($values) extends AbstractWriteAttributesAnalyzer {
+            $analyzer = new /** @extends AbstractWriteAttributesAnalyzer<\Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery>  */ class($values) extends AbstractWriteAttributesAnalyzer {
                 private $values;
                 public function __construct(array $values) { $this->values = $values; }
                 protected function values(CompilableClause $query): array { return $this->values; }

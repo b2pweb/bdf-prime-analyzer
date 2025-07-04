@@ -6,6 +6,9 @@ use Bdf\Prime\Mapper\Metadata;
 use Bdf\Prime\Relations\Exceptions\RelationNotFoundException;
 use Bdf\Prime\Repository\RepositoryInterface;
 
+use function assert;
+use function count;
+
 /**
  * Class RepositoryUtil
  */
@@ -45,6 +48,11 @@ class RepositoryUtil
         }
 
         $parts = explode('.', $attribute, 2);
+
+        if (count($parts) !== 2) {
+            return false;
+        }
+
         $relation = $this->relation($parts[0]);
 
         return $relation && $relation->hasAttribute($parts[1]);
@@ -76,6 +84,11 @@ class RepositoryUtil
         }
 
         $parts = explode('.', $field, 2);
+
+        if (count($parts) !== 2) {
+            return false;
+        }
+
         $relation = $this->relation($parts[0]);
 
         return $relation && $relation->isIndexed($parts[1]);
