@@ -8,6 +8,8 @@ use Bdf\Prime\Analyzer\Query\WriteAttributesAnalyzer;
 use Bdf\Prime\Entity\Model;
 use Bdf\Prime\Mapper\Mapper;
 
+use function method_exists;
+
 /**
  * Class UpdateValuesAnalyzerTest
  */
@@ -87,7 +89,12 @@ class UpdateValuesAnalyzerTest extends AnalyzerTestCase
         $this->assertEquals(['Bad value "invalid" for "array".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['array' => 'invalid'])));
         $this->assertEquals(['Bad value "-300" for "tinyint".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['tinyint' => -300])));
         $this->assertEquals(['Bad value "1000000" for "smallint".'], $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['smallint' => 1000000])));
-        $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['array' => [[]]]))[0]);
+
+        if (method_exists($this, 'assertMatchesRegularExpression')) {
+            $this->assertMatchesRegularExpression('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['array' => [[]]]))[0]);
+        } else {
+            $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), EntityWithTypes::keyValue()->values(['array' => [[]]]))[0]);
+        }
     }
 }
 

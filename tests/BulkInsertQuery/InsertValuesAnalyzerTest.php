@@ -9,6 +9,8 @@ use Bdf\Prime\Entity\Model;
 use Bdf\Prime\Mapper\Mapper;
 use Bdf\Prime\Query\Custom\BulkInsert\BulkInsertQuery;
 
+use function method_exists;
+
 /**
  * Class InsertValuesAnalyzerTest
  */
@@ -80,7 +82,12 @@ class InsertValuesAnalyzerTest extends AnalyzerTestCase
         $this->assertEquals(['Bad value "invalid" for "array".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => 'invalid'])));
         $this->assertEquals(['Bad value "-300" for "tinyint".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['tinyint' => -300])));
         $this->assertEquals(['Bad value "1000000" for "smallint".'], $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['smallint' => 1000000])));
-        $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => [[]]]))[0]);
+
+        if (method_exists($this, 'assertMatchesRegularExpression')) {
+            $this->assertMatchesRegularExpression('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => [[]]]))[0]);
+        } else {
+            $this->assertRegExp('/Bad value "Array.*" for "array"./s', $this->analyzer->analyze(EntityWithTypes::repository(), $this->query(EntityWithTypes::class)->values(['array' => [[]]]))[0]);
+        }
     }
 
     /**
