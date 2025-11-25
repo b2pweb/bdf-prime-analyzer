@@ -155,15 +155,15 @@ class AnalyzerServiceTest extends AnalyzerTestCase
         $report = $r->newInstanceWithoutConstructor();
 
         $rfile = $r->getProperty('file');
-        $rfile->setAccessible(true);
+        PHP_VERSION_ID >= 80100 or $rfile->setAccessible(true);
         $rfile->setValue($report, $file);
 
         $rline = $r->getProperty('line');
-        $rline->setAccessible(true);
+        PHP_VERSION_ID >= 80100 or $rline->setAccessible(true);
         $rline->setValue($report, $line);
 
         $rstackTrace = $r->getProperty('stackTrace');
-        $rstackTrace->setAccessible(true);
+        PHP_VERSION_ID >= 80100 or $rstackTrace->setAccessible(true);
         $rstackTrace->setValue($report, $stackTrace);
 
         return $report;

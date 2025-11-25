@@ -111,7 +111,7 @@ final class QueryOptimisationAnalyser implements RepositoryQueryErrorAnalyzerInt
 
         if (!$this->extensionProperty) {
             $this->extensionProperty = new ReflectionProperty(AbstractReadCommand::class, 'extension');
-            $this->extensionProperty->setAccessible(true);
+            PHP_VERSION_ID >= 80100 or $this->extensionProperty->setAccessible(true);
         }
 
         /** @var object $extension */

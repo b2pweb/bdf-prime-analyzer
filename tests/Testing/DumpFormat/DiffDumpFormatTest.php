@@ -149,7 +149,7 @@ class DiffDumpFormatTest extends AnalyzerTestCase
 
         $r = new \ReflectionClass(Report::class);
         $property = $r->getProperty('stackTrace');
-        $property->setAccessible(true);
+        PHP_VERSION_ID >= 80100 or $property->setAccessible(true);
 
         foreach ($reports as $report) {
             $newReport = clone $report;

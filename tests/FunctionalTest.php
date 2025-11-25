@@ -57,7 +57,7 @@ class FunctionalTest extends AnalyzerTestCase
      */
     public function test_with_on_same_entity_should_not_raise_n_plus_1()
     {
-        $this->testPack->pushEntity(new TestEntity(['id' => 2, 'key' => 'response', 'value' => 42]));
+        $this->testPack->pushEntity(new TestEntity(['id' => 2, 'key' => 'response', 'value' => 42, 'embeddedRelation' => ['key' => 'response']]));
         TestEntity::with(['relationEntity', 'embeddedRelation'])->get(2);
 
         $this->assertCount(2, $this->service->reports());
