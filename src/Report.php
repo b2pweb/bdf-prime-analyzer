@@ -10,6 +10,8 @@ use Bdf\Prime\Relations\RelationInterface;
 use Bdf\Prime\ServiceLocator;
 use LogicException;
 
+use function in_array;
+
 /**
  * Store a query analysis report
  */
@@ -292,7 +294,7 @@ final class Report implements Hashable
             }
 
             if (
-                $trace['function'] === 'processEntities'
+                in_array($trace['function'], ['processEntities', 'finalize'])
                 && isset($trace['class'])
                 && $trace['class'] == QueryRepositoryExtension::class
             ) {
